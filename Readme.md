@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Любовь Левченко](https://up.htmlacademy.ru/javascript-individual/2/user/2460087).
-* Наставник: `Неизвестно`.
+* Наставник: [Павел Ившин](https://htmlacademy.ru/profile/id818775).
 
 ---
 
