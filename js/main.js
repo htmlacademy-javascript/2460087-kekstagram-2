@@ -7,7 +7,8 @@ function getRandomInteger(min, max) {
   return Math.floor(result);
 }
 
-//Описание фотографий
+
+// Описание фотографий
 const descriptionsPhotos = {
   1: 'Нет людей — нет проблем!',
   2: 'На пляж — это туда.',
@@ -37,7 +38,7 @@ const descriptionsPhotos = {
 };
 
 // Имена пользователей
-const username = [
+const usernames = [
   'Шерлок Холмс',
   'Эркюль Пуаро',
   'Джеймс Бонд',
@@ -70,16 +71,15 @@ const username = [
   'Тони Старк'
 ];
 
-// Текст комментария
-const message = [
+// Текст комментариев
+const messages = [
   'Всё отлично!',
-  'В целом всё неплохо.Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра.В конце концов это просто непрофессионально.',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
   'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают.Как можно было поймать такой неудачный момент ? !'
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?'
 ];
-
 
 const photos = [];
 const photoCount = 25; // количество фотографий
@@ -94,12 +94,13 @@ for (let i = 1; i <= photoCount; i++) {
     comments: []
   };
 
-  for (let j = 1; j <= getRandomInteger(0, 30); j++) {
+  const numberOfComments = getRandomInteger(0, 30);
+  for (let j = 0; j < numberOfComments; j++) {
     const currentComment = {
       id: commentIdCounter,
       avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
-      message: message[getRandomInteger(0, message.length - 1)],
-      name: username[getRandomInteger(0, username.length - 1)]
+      message: messages[getRandomInteger(0, messages.length - 1)],
+      name: usernames[getRandomInteger(0, usernames.length - 1)]
     };
 
     currentPhoto.comments.push(currentComment);
@@ -107,5 +108,3 @@ for (let i = 1; i <= photoCount; i++) {
   }
   photos.push(currentPhoto);
 }
-
-console.log(JSON.stringify(photos, null, 2));
