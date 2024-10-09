@@ -1,5 +1,4 @@
 // Получение целого числа из переданного диапазона
-
 function getRandomInteger(min, max) {
   const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
   const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
@@ -9,7 +8,6 @@ function getRandomInteger(min, max) {
 }
 
 //Описание фотографий
-
 const descriptionsPhotos = {
   1: 'Нет людей — нет проблем!',
   2: 'На пляж — это туда.',
@@ -38,10 +36,9 @@ const descriptionsPhotos = {
   25: 'В последний раз видел такое на "Нашествии 2002"'
 };
 
-
 const photos = [];
 const photoCount = 25; // количество фотографий
-let commentIdCounter = 1;
+let commentIdCounter = 1; //Для отслеживания ID комментариев
 
 for (let i = 1; i <= photoCount; i++) {
   const currentPhoto = {
@@ -55,16 +52,15 @@ for (let i = 1; i <= photoCount; i++) {
   for (let j = 1; j <= getRandomInteger(0, 30); j++) {
     const currentComment = {
       id: commentIdCounter,
-      avatar: '',
+      avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
       message: '',
       name: ''
     };
-    console.log(`ID комментария: ${currentComment.id}`);
 
     currentPhoto.comments.push(currentComment);
     commentIdCounter++;
   }
-  //photos.push(currentPhoto);
+  photos.push(currentPhoto);
 }
 
 console.log(photos);
