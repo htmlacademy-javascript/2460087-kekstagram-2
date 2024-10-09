@@ -8,7 +8,7 @@ function getRandomInteger(min, max) {
   return Math.floor(result);
 }
 
-//Объект с описаниями фотографий
+//Описание фотографий
 
 const descriptionsPhotos = {
   1: 'Нет людей — нет проблем!',
@@ -39,20 +39,32 @@ const descriptionsPhotos = {
 };
 
 
-let photos = [];
-const photoCount = 25;
+const photos = [];
+const photoCount = 25; // количество фотографий
+let commentIdCounter = 1;
 
 for (let i = 1; i <= photoCount; i++) {
   const currentPhoto = {
-    id: i, // ID
-    url: `photos/${i}.jpg`, // URL совпадает с ID
+    id: i,
+    url: `photos/${i}.jpg`,
     description: descriptionsPhotos[i],
     likes: getRandomInteger(15, 200),
     comments: []
   };
 
-  photos.push(currentPhoto);
+  for (let j = 1; j <= getRandomInteger(0, 30); j++) {
+    const currentComment = {
+      id: commentIdCounter,
+      avatar: '',
+      message: '',
+      name: ''
+    };
+    console.log(`ID комментария: ${currentComment.id}`);
+
+    currentPhoto.comments.push(currentComment);
+    commentIdCounter++;
+  }
+  //photos.push(currentPhoto);
 }
 
 console.log(photos);
-
