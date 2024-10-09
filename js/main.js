@@ -36,6 +36,41 @@ const descriptionsPhotos = {
   25: 'В последний раз видел такое на "Нашествии 2002"'
 };
 
+// Имена пользователей
+const username = [
+  'Шерлок Холмс',
+  'Эркюль Пуаро',
+  'Джеймс Бонд',
+  'Лисбет Саландер',
+  'Нэнси Дрю',
+  'Квентин Тарантино',
+  'Грегори Хаус',
+  'Дик Трейси',
+  'Мерфи Браун',
+  'Винсент Ван Гог',
+  'Джек Бауэр',
+  'Инспектор Гаджет',
+  'Кристофер Нолан',
+  'Хантер С. Томпсон',
+  'Рик Декард',
+  'Призрак Оперы',
+  'Дейзи Бук',
+  'Шерри Пай',
+  'Ларри Дэвид',
+  'Гинджер Тейлор',
+  'Конан Дойл',
+  'Эллиот Несс',
+  'Луи Пастёр',
+  'Питер Пэн',
+  'Супермен',
+  'Фрэнк Уэббер',
+  'Робин Гуд',
+  'Дориан Грей',
+  'Фред Флинтстоун',
+  'Тони Старк'
+];
+
+
 const photos = [];
 const photoCount = 25; // количество фотографий
 let commentIdCounter = 1; //Для отслеживания ID комментариев
@@ -54,7 +89,7 @@ for (let i = 1; i <= photoCount; i++) {
       id: commentIdCounter,
       avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
       message: '',
-      name: ''
+      name: username[getRandomInteger(0, 29)]
     };
 
     currentPhoto.comments.push(currentComment);
@@ -63,4 +98,4 @@ for (let i = 1; i <= photoCount; i++) {
   photos.push(currentPhoto);
 }
 
-console.log(photos);
+console.log(JSON.stringify(photos, null, 2));
