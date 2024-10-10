@@ -1,4 +1,4 @@
-// Описание фотографий
+// Временные данные
 const descriptionsPhotos = [
   'Нет людей — нет проблем!',
   'На пляж — это туда.',
@@ -17,7 +17,7 @@ const descriptionsPhotos = [
   'Вот гири к ним привяжу, соседи порадуются.',
   'Здесь мы видим небесный лайнер на фоне… ничего!',
   'Вам, наверное, интересно зачем я вас здесь собрал?',
-  'Встреча века: ретро машина, пережившая сотни стилей, и кирпичное здание, уставшее от жизни.',
+  'Что древнее: эта тачка или эта стена?',
   'Иду к холодильнику в три часа ночи.',
   'Вы когда-нибудь видели, как природа отыгралась на пальмах? Теперь видели.',
   'Эта еда настолько невзрачна, что даже фотосессия не спасла!',
@@ -27,7 +27,6 @@ const descriptionsPhotos = [
   'В последний раз видел такое на "Нашествии 2002"'
 ];
 
-// Имена пользователей
 const usernames = [
   'Шерлок Холмс',
   'Эркюль Пуаро',
@@ -41,7 +40,6 @@ const usernames = [
   'Хантер С. Томпсон'
 ];
 
-// Текст комментариев
 const messages = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -51,46 +49,60 @@ const messages = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?'
 ];
 
-// Получение целого числа из переданного диапазона
-const getRandomInteger = (min, max) => {
-  const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
-  const upper = Math.floor(Math.max(Math.abs(min), Math.abs(max)));
-  const result = Math.random() * (upper - lower + 1) + lower;
-
-  return Math.floor(result);
-};
-
-const photos = [];
-const photoCount = 25; // количество фотографий
-let nextCommentId = 1; //Для отслеживания ID комментариев
-
-// Константы для удобства работы со значениями
+// Константы
 const MIN_LIKES = 15;
 const MAX_LIKES = 200;
+const MIN_AVATAR_INDEX = 1;
+const MAX_AVATAR_INDEX = 6;
 const MAX_COMMENTS = 30;
+const PHOTO_COUNT = 25;
 
-for (let i = 1; i <= photoCount; i++) {
-  const currentPhoto = {
-    id: i,
-    url: `photos/${i}.jpg`,
-    description: descriptionsPhotos[i - 1],
-    likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
-    comments: []
-  };
+// Получает целое число в заданном диапазоне
+const getRandomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-  const numberOfComments = getRandomInteger(0, MAX_COMMENTS);
-  for (let j = 0; j < numberOfComments; j++) {
-    const currentComment = {
-      id: nextCommentId,
-      avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
-      message: messages[getRandomInteger(0, messages.length - 1)],
-      name: usernames[getRandomInteger(0, usernames.length - 1)]
-    };
+// Создает один комментарий
+const createComment = (id) => ({
+  id,
+  avatar: `img/avatar-${getRandomInteger(MIN_AVATAR_INDEX, MAX_AVATAR_INDEX)}.svg`,
+  message: messages[getRandomInteger(0, messages.length - 1)],
+  name: usernames[getRandomInteger(0, usernames.length - 1)]
+});
 
-    currentPhoto.comments.push(currentComment);
-    nextCommentId++;
+// Создает массив комментариев
+const createComments = (count, startId) => {
+  const comments = [];
+  for (let i = 0; i < count; i++) {
+    comments.push(createComment(startId + i));
   }
-  photos.push(currentPhoto);
-}
-console.log(photos);
-console.log(JSON.stringify(photos, null, 2));
+  return comments;
+};
+
+// Создает одну фотографию
+const createPhoto = (id, nextCommentId) => ({
+  id,
+  url: `photos/${id}.jpg`,
+  description: descriptionsPhotos[id - 1],
+  likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
+  comments: createComments(getRandomInteger(0, MAX_COMMENTS), nextCommentId)
+});
+
+// Создает массив фотографий
+const createPhotos = (count) => {
+  const photos = [];
+  let nextCommentId = 1;
+
+  for (let i = 1; i <= count; i++) {
+    const photo = createPhoto(i, nextCommentId);
+    nextCommentId += photo.comments.length;
+    photos.push(photo);
+  }
+
+  return photos;
+};
+
+// Генерирует массив объектов с данными фотографий
+const generatedPhotos = createPhotos(PHOTO_COUNT);
+
+//Проверка
+console.log(generatedPhotos);
+console.log(JSON.stringify(generatedPhotos, null, 2));
