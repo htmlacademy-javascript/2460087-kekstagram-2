@@ -64,16 +64,21 @@ const photos = [];
 const photoCount = 25; // количество фотографий
 let nextCommentId = 1; //Для отслеживания ID комментариев
 
+// Константы для удобства работы со значениями
+const MIN_LIKES = 15;
+const MAX_LIKES = 200;
+const MAX_COMMENTS = 30;
+
 for (let i = 1; i <= photoCount; i++) {
   const currentPhoto = {
     id: i,
     url: `photos/${i}.jpg`,
     description: descriptionsPhotos[i - 1],
-    likes: getRandomInteger(15, 200),
+    likes: getRandomInteger(MIN_LIKES, MAX_LIKES),
     comments: []
   };
 
-  const numberOfComments = getRandomInteger(0, 30);
+  const numberOfComments = getRandomInteger(0, MAX_COMMENTS);
   for (let j = 0; j < numberOfComments; j++) {
     const currentComment = {
       id: nextCommentId,
@@ -88,4 +93,4 @@ for (let i = 1; i <= photoCount; i++) {
   photos.push(currentPhoto);
 }
 console.log(photos);
-//console.log(JSON.stringify(photos, null, 2));
+console.log(JSON.stringify(photos, null, 2));
