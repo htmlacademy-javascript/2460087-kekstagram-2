@@ -48,4 +48,4 @@ const createPhotos = (count) => {
   return photos;
 };
 
-export {createPhotos };
+export { createPhotos };
