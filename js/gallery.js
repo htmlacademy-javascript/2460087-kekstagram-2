@@ -1,8 +1,3 @@
-import { generatedPhotos } from './content-generator.js';
-
-// проверить названия по критериям
-// решить проблему со "скачком" окна
-
 let scrollPosition = 0; // Сохраняет позицию скролла
 
 const bigPictureElement = document.querySelector('.big-picture');
@@ -60,11 +55,11 @@ function openBigPicture(photo) {
 }
 
 function closeBigPicture() {
-  const bigPictureElements = document.querySelector('.big-picture'); // особенно над этим названием подумать
-  bigPictureElements.classList.add('hidden');
+  bigPictureElement.classList.add('hidden');
   window.scrollTo(0, scrollPosition);
   document.body.classList.remove('modal-open');
 }
+
 // где-то здесь удаляются другие обработчики
 function closedBigPicture() {
   document.querySelector('#picture-cancel').addEventListener('click', closeBigPicture);
@@ -80,26 +75,20 @@ closedBigPicture();
 
 function initGallery(container, photos) {
   container.addEventListener('click', (event) => {
-    // Проверка клика
     if (event.target.closest('.picture')) {
       const pictureElement = event.target.closest('.picture');
       const pictureImg = pictureElement.querySelector('.picture__img');
 
-      // Получение имени файла изображения
       const pictureSrc = pictureImg.src.split('/').pop();
-
-      // Поиск фотографии по URL
       const picture = photos.find((photo) => photo.url === `photos/${pictureSrc}`);
       openBigPicture(picture);
     }
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const picturesContainer = document.querySelector('.pictures');
+function initPicturesContainer(photos) {
+  const container = document.querySelector('.pictures');
+  initGallery(container, photos);
+}
 
-  initGallery(picturesContainer, generatedPhotos);
-});
-
-
-export { initGallery, closedBigPicture };
+export { initPicturesContainer };
