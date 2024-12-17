@@ -7,6 +7,7 @@ const MAX_LIKES = 200;
 const MIN_AVATAR_INDEX = 1;
 const MAX_AVATAR_INDEX = 6;
 const MAX_COMMENTS = 30;
+const PHOTO_COUNT = 25;
 
 // Создает один комментарий
 const createComment = (id) => ({
@@ -48,4 +49,6 @@ const createPhotos = (count) => {
   return photos;
 };
 
-export { createPhotos };
+const generatedPhotos = createPhotos(PHOTO_COUNT);
+
+export { createPhotos, generatedPhotos };

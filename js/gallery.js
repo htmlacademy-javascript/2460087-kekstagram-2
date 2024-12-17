@@ -1,14 +1,19 @@
+import { generatedPhotos } from './content-generator.js';
+
+// проверить названия по критериям
+// решить проблему со "скачком" окна
+
 let scrollPosition = 0; // Сохраняет позицию скролла
 
-function openBigPicture(photo) {
-  const bigPictureElement = document.querySelector('.big-picture');
-  const bigPictureImg = bigPictureElement.querySelector('.big-picture__img img');
-  const bigPictureLikes = bigPictureElement.querySelector('.big-picture__social .social__likes span');
-  const bigPictureCommentsCount = bigPictureElement.querySelector('.big-picture__social .social__comment-count');
-  const bigPictureCommentsList = bigPictureElement.querySelector('.big-picture__social .social__comments');
-  const commentsLoader = bigPictureElement.querySelector('.big-picture__social .comments-loader');
-  const bigPictureCaption = bigPictureElement.querySelector('.big-picture__social .social__caption');
+const bigPictureElement = document.querySelector('.big-picture');
+const bigPictureImg = bigPictureElement.querySelector('.big-picture__img img');
+const bigPictureLikes = bigPictureElement.querySelector('.big-picture__social .social__likes span');
+const bigPictureCommentsCount = bigPictureElement.querySelector('.big-picture__social .social__comment-count');
+const bigPictureCommentsList = bigPictureElement.querySelector('.big-picture__social .social__comments');
+const commentsLoader = bigPictureElement.querySelector('.big-picture__social .comments-loader');
+const bigPictureCaption = bigPictureElement.querySelector('.big-picture__social .social__caption');
 
+function openBigPicture(photo) {
   scrollPosition = window.scrollY;
 
   bigPictureElement.classList.remove('hidden');
@@ -55,12 +60,12 @@ function openBigPicture(photo) {
 }
 
 function closeBigPicture() {
-  const bigPictureElement = document.querySelector('.big-picture');
-  bigPictureElement.classList.add('hidden');
+  const bigPictureElements = document.querySelector('.big-picture'); // особенно над этим названием подумать
+  bigPictureElements.classList.add('hidden');
   window.scrollTo(0, scrollPosition);
   document.body.classList.remove('modal-open');
 }
-
+// где-то здесь удаляются другие обработчики
 function closedBigPicture() {
   document.querySelector('#picture-cancel').addEventListener('click', closeBigPicture);
 
@@ -70,6 +75,8 @@ function closedBigPicture() {
     }
   });
 }
+
+closedBigPicture();
 
 function initGallery(container, photos) {
   container.addEventListener('click', (event) => {
@@ -87,5 +94,12 @@ function initGallery(container, photos) {
     }
   });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const picturesContainer = document.querySelector('.pictures');
+
+  initGallery(picturesContainer, generatedPhotos);
+});
+
 
 export { initGallery, closedBigPicture };
