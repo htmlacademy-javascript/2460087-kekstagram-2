@@ -14,20 +14,24 @@ function openBigPicture(photo) {
   // Ширина полосы прокрутки
   const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-  // Фиксированное положение страницы
+  // Фиксация положения страницы
   document.body.style.position = 'fixed';
   document.body.style.top = `-${scrollPosition}px`;
   document.body.style.left = '0';
   document.body.style.width = '100%';
   document.body.style.paddingRight = `${scrollBarWidth}px`;
 
+  // Открытие модального окна в верхней части экрана
   bigPictureElement.classList.remove('hidden');
 
-  // Скрывает блоки с комментами и загрузкой
+  // Сброс позицию скролла внутри модального окна
+  bigPictureElement.scrollTop = 0;
+
+  // Скрытие блоков с комментами и загрузкой
   bigPictureCommentsCount.classList.add('hidden');
   commentsLoader.classList.add('hidden');
 
-  // Запрет прокрутки
+  // Запрет прокрутки основной страницы
   document.body.classList.add('modal-open');
 
   // Заполнение данными
@@ -63,7 +67,7 @@ function openBigPicture(photo) {
     bigPictureCommentsList.appendChild(commentElement);
   });
 
-  // обработчик для закрытия при клике вне контента
+  // Обработчик для закрытия при клике вне контента
   bigPictureElement.addEventListener('click', handleOutsideClick);
 }
 
@@ -75,13 +79,16 @@ function closeBigPicture() {
   document.body.style.width = '';
   document.body.style.paddingRight = '';
 
-  // вернуть скролл
+  // вернуть скролл на страницу
   window.scrollTo(0, scrollPosition);
 
+  // Убираем модальное окно
   bigPictureElement.classList.add('hidden');
+
+  // Убираем блокировку прокрутки
   document.body.classList.remove('modal-open');
 
-  // удаление обработчика
+  // Убираем обработчик
   bigPictureElement.removeEventListener('click', handleOutsideClick);
 }
 
