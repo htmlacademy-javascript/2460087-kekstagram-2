@@ -6,38 +6,42 @@ const bigPictureCommentsList = bigPictureElement.querySelector('.big-picture__so
 const commentsLoader = bigPictureElement.querySelector('.big-picture__social .comments-loader');
 const bigPictureCaption = bigPictureElement.querySelector('.big-picture__social .social__caption');
 
-let scrollPosition = 0; // Сохраняет позицию скролла
+let scrollPosition = 0;
 
-function openBigPicture(photo) {
+function lockBodyScroll() {
   scrollPosition = window.scrollY;
-
-  // Ширина полосы прокрутки
   const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-  // Фиксация положения страницы
   document.body.style.position = 'fixed';
   document.body.style.top = `-${scrollPosition}px`;
   document.body.style.left = '0';
   document.body.style.width = '100%';
   document.body.style.paddingRight = `${scrollBarWidth}px`;
-
-  // Открытие модального окна в верхней части экрана
-  bigPictureElement.classList.remove('hidden');
-
-  // Сброс позицию скролла внутри модального окна
-  bigPictureElement.scrollTop = 0;
-
-  // Скрытие блоков с комментами и загрузкой
-  bigPictureCommentsCount.classList.add('hidden');
-  commentsLoader.classList.add('hidden');
-
-  // Запрет прокрутки основной страницы
   document.body.classList.add('modal-open');
+}
 
-  // Заполнение данными
+function unlockBodyScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.width = '';
+  document.body.style.paddingRight = '';
+  window.scrollTo(0, scrollPosition);
+  document.body.classList.remove('modal-open');
+}
+
+function clearModal() {
+  bigPictureImg.src = '';
+  bigPictureImg.alt = '';
+  bigPictureLikes.textContent = '';
+  bigPictureCommentsCount.innerHTML = '';
+  bigPictureCaption.textContent = '';
+  bigPictureCommentsList.innerHTML = '';
+}
+
+function populateBigPicture(photo) {
   bigPictureImg.src = photo.url;
   bigPictureImg.alt = photo.description;
-
   bigPictureLikes.textContent = photo.likes;
 
   const commentsCount = photo.comments.length;
@@ -45,50 +49,41 @@ function openBigPicture(photo) {
 
   bigPictureCaption.textContent = photo.description;
 
-  bigPictureCommentsList.innerHTML = '';
+  photo.comments.forEach(createComment);
+}
 
-  // Генерация и добавление комментариев
-  photo.comments.forEach((comment) => {
-    const commentElement = document.createElement('li');
-    commentElement.classList.add('social__comment');
+function createComment(comment) {
+  const commentElement = document.createElement('li');
+  commentElement.classList.add('social__comment');
 
-    const commentAvatar = document.createElement('img');
-    commentAvatar.classList.add('social__picture');
-    commentAvatar.src = comment.avatar;
-    commentAvatar.alt = `${comment.name}`;
+  const commentAvatar = document.createElement('img');
+  commentAvatar.classList.add('social__picture');
+  commentAvatar.src = comment.avatar;
+  commentAvatar.alt = comment.name;
 
-    const commentText = document.createElement('p');
-    commentText.classList.add('social__text');
-    commentText.textContent = comment.message;
+  const commentText = document.createElement('p');
+  commentText.classList.add('social__text');
+  commentText.textContent = comment.message;
 
-    commentElement.appendChild(commentAvatar);
-    commentElement.appendChild(commentText);
+  commentElement.appendChild(commentAvatar);
+  commentElement.appendChild(commentText);
+  bigPictureCommentsList.appendChild(commentElement);
+}
 
-    bigPictureCommentsList.appendChild(commentElement);
-  });
-
-  // Обработчик для закрытия при клике вне контента
+function openBigPicture(photo) {
+  lockBodyScroll();
+  bigPictureElement.classList.remove('hidden');
+  bigPictureElement.scrollTop = 0;
+  bigPictureCommentsCount.classList.add('hidden');
+  commentsLoader.classList.add('hidden');
+  clearModal();
+  populateBigPicture(photo);
   bigPictureElement.addEventListener('click', handleOutsideClick);
 }
 
 function closeBigPicture() {
-  // вернуть стили
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.width = '';
-  document.body.style.paddingRight = '';
-
-  // вернуть скролл на страницу
-  window.scrollTo(0, scrollPosition);
-
-  // Убираем модальное окно
+  unlockBodyScroll();
   bigPictureElement.classList.add('hidden');
-
-  // Убираем блокировку прокрутки
-  document.body.classList.remove('modal-open');
-
-  // Убираем обработчик
   bigPictureElement.removeEventListener('click', handleOutsideClick);
 }
 
@@ -99,24 +94,11 @@ function handleOutsideClick(event) {
   }
 }
 
-function closedBigPicture() {
-  document.querySelector('#picture-cancel').addEventListener('click', closeBigPicture);
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeBigPicture();
-    }
-  });
-}
-
-closedBigPicture();
-
 function initGallery(container, photos) {
   container.addEventListener('click', (event) => {
     if (event.target.closest('.picture')) {
       const pictureElement = event.target.closest('.picture');
       const pictureImg = pictureElement.querySelector('.picture__img');
-
       const pictureSrc = pictureImg.src.split('/').pop();
       const picture = photos.find((photo) => photo.url === `photos/${pictureSrc}`);
       openBigPicture(picture);
