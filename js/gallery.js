@@ -78,13 +78,23 @@ function openBigPicture(photo) {
   commentsLoader.classList.add('hidden');
   clearModal();
   populateBigPicture(photo);
+
+  document.addEventListener('keydown', handleEscapeKey);
   bigPictureElement.addEventListener('click', handleOutsideClick);
 }
 
 function closeBigPicture() {
   unlockBodyScroll();
   bigPictureElement.classList.add('hidden');
+
+  document.removeEventListener('keydown', handleEscapeKey);
   bigPictureElement.removeEventListener('click', handleOutsideClick);
+}
+
+function handleEscapeKey(event) {
+  if (event.key === 'Escape') {
+    closeBigPicture();
+  }
 }
 
 function handleOutsideClick(event) {
