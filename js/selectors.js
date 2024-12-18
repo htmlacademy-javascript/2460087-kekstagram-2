@@ -11,10 +11,11 @@ function initializeSelectors() {
   };
 }
 
+const selectors = initializeSelectors();
 
 // Функция для обновления селекторов в случае изменения DOM
 function refreshSelectors() {
   return initializeSelectors();
 }
 
-export { initializeSelectors, refreshSelectors };
+export { selectors, refreshSelectors };
