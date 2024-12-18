@@ -1,142 +1,208 @@
-// Элементы для работы с модальным окном
-const bigPictureElement = document.querySelector('.big-picture'); // Основной элемент модального окна
-const bigPictureImg = bigPictureElement.querySelector('.big-picture__img img'); // Изображение в модальном окне
-const bigPictureLikes = bigPictureElement.querySelector('.big-picture__social .social__likes span'); // Количество лайков
-const bigPictureCommentsCount = bigPictureElement.querySelector('.big-picture__social .social__comment-count'); // Количество комментариев
-const bigPictureCommentsList = bigPictureElement.querySelector('.big-picture__social .social__comments'); // Список комментариев
-const commentsLoader = bigPictureElement.querySelector('.big-picture__social .comments-loader'); // Кнопка для подгрузки комментариев
-const bigPictureCaption = bigPictureElement.querySelector('.big-picture__social .social__caption'); // Подпись под изображением
+// Селекторы для элементов страницы
+const selectors = {
+  bigPictureElement: document.querySelector('.big-picture'),
+  bigPictureImg: document.querySelector('.big-picture__img img'),
+  bigPictureLikes: document.querySelector('.big-picture__social .social__likes span'),
+  bigPictureCommentsCount: document.querySelector('.big-picture__social .social__comment-count'),
+  bigPictureCommentsList: document.querySelector('.big-picture__social .social__comments'),
+  commentsLoader: document.querySelector('.big-picture__social .comments-loader'),
+  bigPictureCaption: document.querySelector('.big-picture__social .social__caption'),
+};
 
-let scrollPosition = 0; // Переменная для хранения текущей позиции прокрутки
+// Переменные для хранения состояния прокрутки страницы и комментариев
+let scrollPosition = 0; // Текущая позиция прокрутки страницы
+let displayedCommentsCount = 0; // Счётчик отображенных комментариев
+let currentPhoto = null; // Текущая фотография, отображаемая в модальном окне
 
-// Функция для блокировки прокрутки страницы при открытии модального окна
-function lockBodyScroll() {
-  scrollPosition = window.scrollY; // сохранить текущую позицию прокрутки
-  const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth; // вычисление ширины полосы прокрутки
+// Функция для блокировки и разблокировки прокрутки страницы
+function toggleBodyScroll(isLocked) {
+  // Блокировка прокрутки страницы
+  if (isLocked) {
+    scrollPosition = window.scrollY; // Запомнить текущую позицию прокрутки
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth; // Ширина скролл-бара
 
-  // Блок прокрутки страницы
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollPosition}px`;
-  document.body.style.left = '0';
-  document.body.style.width = '100%';
-  document.body.style.paddingRight = `${scrollBarWidth}px`; // Учесть ширину полосы прокрутки
-  document.body.classList.add('modal-open'); // Добавить класс для открытия модального окна
+    // Изменяем стиль body, чтобы заблокировать прокрутку
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`; // Чтобы странца не двигалась
+    document.body.style.left = '0';
+    document.body.style.width = '100%';
+    document.body.style.paddingRight = `${scrollBarWidth}px`; // Вычислить ширину с учётом скролл-бара
+    document.body.classList.add('modal-open'); // Добавить класс для стилизации модального окна
+  } else {
+    // Разблокировка прокрутки
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.width = '';
+    document.body.style.paddingRight = '';
+    window.scrollTo(0, scrollPosition); // Восстановить позицию прокрутки
+    document.body.classList.remove('modal-open'); // Убрать класс
+  }
 }
 
-// Функция для разблокировки прокрутки страницы при закрытии модального окна
-function unlockBodyScroll() {
-  document.body.style.position = ''; // Сбросить стили для разблокировки
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.width = '';
-  document.body.style.paddingRight = '';
-  window.scrollTo(0, scrollPosition); // Возвращает на место позицию прокрутки
-  document.body.classList.remove('modal-open'); // Убирает класс закрытия модального окна
-}
-
-// Функция для очистки модального окна перед заполнением новыми данными
+// Функция для очистки модального окна перед загрузкой нового изображения
 function clearModal() {
-  bigPictureImg.src = '';
-  bigPictureImg.alt = '';
-  bigPictureLikes.textContent = '';
-  bigPictureCommentsCount.innerHTML = '';
-  bigPictureCaption.textContent = '';
-  bigPictureCommentsList.innerHTML = '';
+  // Массив элементов, которые нужно очистить
+  const elementsToClear = [
+    selectors.bigPictureImg,
+    selectors.bigPictureLikes,
+    selectors.bigPictureCommentsCount,
+    selectors.bigPictureCaption,
+    selectors.bigPictureCommentsList
+  ];
+
+  // Очисить текстовое содержимое элементов
+  elementsToClear.forEach((element) => {
+    element.textContent = ''; // Убрать текст из каждого элемента
+  });
+
+  // Очистить списка комментариев
+  selectors.bigPictureCommentsList.innerHTML = '';
+
+  // Сбросить счетчик комментариев
+  displayedCommentsCount = 0;
+
+  // Убрать кнопку загрузки комментариев
+  selectors.commentsLoader.classList.add('hidden');
 }
 
-// Функция для заполнения модального окна данными о фотографии
+// Функция для отображения кнопки "Загрузить комментарии"
+function toggleCommentsLoader(photo) {
+  const commentsCount = photo.comments.length; // Количество комментариев у фотографии
+  if (commentsCount > displayedCommentsCount) {
+    // Если есть комментарии, которые можно загрузить, показать кнопку
+    selectors.commentsLoader.classList.remove('hidden');
+  } else {
+    // Если все комментарии загружены, убрать кнопку
+    selectors.commentsLoader.classList.add('hidden');
+  }
+}
+
+// Функция для заполнения окна полноразмерного изображения данными
 function populateBigPicture(photo) {
-  bigPictureImg.src = photo.url;
-  bigPictureImg.alt = photo.description;
-  bigPictureLikes.textContent = photo.likes;
+  // Заполнение данными изображения, лайков, описания
+  selectors.bigPictureImg.src = photo.url;
+  selectors.bigPictureImg.alt = photo.description;
+  selectors.bigPictureLikes.textContent = photo.likes;
 
-  const commentsCount = photo.comments.length;
-  bigPictureCommentsCount.innerHTML = `${commentsCount} из ${commentsCount} комментариев`; // Обновление информацию о комментариях
+  const commentsCount = photo.comments.length; // Общее количество комментариев
+  displayedCommentsCount = Math.min(commentsCount, 5); // Показать максимум 5 комментариев
 
-  bigPictureCaption.textContent = photo.description;
+  // Обновить счетчик комментариев
+  selectors.bigPictureCommentsCount.textContent = `${displayedCommentsCount} из ${commentsCount} комментариев`;
 
-  // Создание комментариев для фотографии
-  photo.comments.forEach(createComment);
+  // Показать описание фотографии
+  selectors.bigPictureCaption.textContent = photo.description;
+
+  // Показать первые 5 комментариев
+  photo.comments.slice(0, displayedCommentsCount).forEach(createComment);
+
+  // Проверка, нужно ли показывать кнопку для загрузки дополнительных комментариев
+  toggleCommentsLoader(photo);
 }
 
-// Функция для создания комментария в модальном окне
-// Вопрос: нельзя ли изменить разметку, чтобы добавить шаблон, а не создавать новый элемент для каждого комментария?
+// Функция для загрузки следующих 5 комментариев
+function loadMoreComments() {
+  if (!currentPhoto) {
+    return; // Если нет текущей фотографии, выход
+  }
+
+  const commentsCount = currentPhoto.comments.length; // Общее количество комментариев
+  const nextComments = currentPhoto.comments.slice(displayedCommentsCount, displayedCommentsCount + 5); // Взять следующие 5 комментариев
+  nextComments.forEach(createComment); // Добавляем комментарии в DOM
+
+  // Обновить счетчик показанных комментариев
+  displayedCommentsCount += nextComments.length;
+  selectors.bigPictureCommentsCount.textContent = `${displayedCommentsCount} из ${commentsCount} комментариев`;
+
+  // Обновить кнопку для загрузки комментариев
+  toggleCommentsLoader(currentPhoto);
+}
+
+// Функция для создания одного комментария и добавления его в DOM
 function createComment(comment) {
-  const commentElement = document.createElement('li'); // Создает элемент списка
-  commentElement.classList.add('social__comment'); // Добавляет класс для стилизации комментария
+  // Создать элемент списка для комментария
+  const commentElement = document.createElement('li');
+  commentElement.classList.add('social__comment');
 
-  const commentAvatar = document.createElement('img'); // Создает элемент для аватара
-  commentAvatar.classList.add('social__picture'); // Добавляет класс для аватара
-  commentAvatar.src = comment.avatar; // Устанавливает ссылку на аватар
-  commentAvatar.alt = comment.name; // Устанавливает имя для alt
+  // Создать элемент для аватарки комментария
+  const commentAvatar = document.createElement('img');
+  commentAvatar.classList.add('social__picture');
+  commentAvatar.src = comment.avatar;
+  commentAvatar.alt = comment.name;
 
-  const commentText = document.createElement('p'); // Создает элемент для текста комментария
-  commentText.classList.add('social__text'); // Добавляет класс для текста
-  commentText.textContent = comment.message; // Устанавливает текст комментария
+  // Создать элемент для текста комментария
+  const commentText = document.createElement('p');
+  commentText.classList.add('social__text');
+  commentText.textContent = comment.message;
 
-  // Добавляет аватар и текст в элемент комментария
+  // Добавить аватар и текст в элемент комментария
   commentElement.appendChild(commentAvatar);
   commentElement.appendChild(commentText);
-  bigPictureCommentsList.appendChild(commentElement); // Добавляет комментарий в список
+
+  // Добавить комментарий в список
+  selectors.bigPictureCommentsList.appendChild(commentElement);
 }
 
-// Функция для открытия модального окна с фотографией
+// Функция для открытия полноразмерного изображения
 function openBigPicture(photo) {
-  lockBodyScroll(); // Блок прокрутку страницы
-  bigPictureElement.classList.remove('hidden'); // Убирает скрытие модального окна
-  bigPictureElement.scrollTop = 0; // Старт окна от начала страницы
-  bigPictureCommentsCount.classList.add('hidden'); // Скрыть счетчик комментариев
-  commentsLoader.classList.add('hidden'); // Скрыть кнопку подгрузки комментариев
-  clearModal(); // Очистка модальное окно перед заполнением
-  populateBigPicture(photo); // Заполнение модальное окно данными фотографии
+  currentPhoto = photo; // Запомнить текущую фотографию
+  toggleBodyScroll(true); // Заблокировать прокрутку страницы
+  selectors.bigPictureElement.classList.remove('hidden'); // Показать модальное окно с изображением
+  selectors.bigPictureElement.scrollTop = 0; // Установить скролл в верхнюю часть окна
+  selectors.bigPictureCommentsCount.classList.remove('hidden'); // Показать счетчик комментариев
+  selectors.commentsLoader.classList.remove('hidden'); // Показать кнопку для загрузки комментариев
+  clearModal(); // Очистить модальное окно
+  populateBigPicture(photo); // Заполнить окно изображением и комментариями
 
-  // обработчики событий для закрытия окна
+  // Добавить обработчики для закрытия окна
   document.addEventListener('keydown', handleEscapeKey);
-  bigPictureElement.addEventListener('click', handleOutsideClick);
+  selectors.bigPictureElement.addEventListener('click', handleOutsideClick);
 }
 
-// Функция для закрытия модального окна
+// Функция для закрытия полноразмерного изображения
 function closeBigPicture() {
-  unlockBodyScroll(); // Разблокировать прокрутку страницы
-  bigPictureElement.classList.add('hidden'); // Скрыть модальное окно
+  toggleBodyScroll(false); // Разблокировать прокрутку
+  selectors.bigPictureElement.classList.add('hidden'); // Скрываем окно
 
-  // убрать обработчики событий
+  // Убрать обработчики для закрытия окна
   document.removeEventListener('keydown', handleEscapeKey);
-  bigPictureElement.removeEventListener('click', handleOutsideClick);
+  selectors.bigPictureElement.removeEventListener('click', handleOutsideClick);
 }
 
-// Функция для обработки нажатия клавиши Escape
+// Обработчик клавиши Escape для закрытия окна
 function handleEscapeKey(event) {
-  if (event.key === 'Escape') { // Если нажата клавиша Escape
-    closeBigPicture(); // Закрыть модальное окно
+  if (event.key === 'Escape') {
+    closeBigPicture(); // Если нажата клавиша Escape, закрыть окно
   }
 }
 
-// Функция для обработки клика вне модального окна
+// Обработчик клика по области вне изображения и комментариев для закрытия окна
 function handleOutsideClick(event) {
-  if (!event.target.closest('.big-picture__img') &&
-    !event.target.closest('.big-picture__social')) { // Если клик был вне изображения
-    closeBigPicture(); // Закрыть модальное окно
+  if (!event.target.closest('.big-picture__img') && !event.target.closest('.big-picture__social')) {
+    closeBigPicture(); // Если клик за пределы, закрыть окно
   }
 }
 
-// Функция для инициализации галереи и обработки кликов на фотографии
+// Инициализация галереи, обработка кликов по миниатюрам
 function initGallery(container, photos) {
   container.addEventListener('click', (event) => {
-    if (event.target.closest('.picture')) { // Если клик был на миниатюре фотографии
-      const pictureElement = event.target.closest('.picture');
-      const pictureImg = pictureElement.querySelector('.picture__img');
-      const pictureSrc = pictureImg.src.split('/').pop(); // Извлекаем имя файла фотографии
-      const picture = photos.find((photo) => photo.url === `photos/${pictureSrc}`); // найти фотографию по URL
-      openBigPicture(picture); // Открыть модальное окно с выбранной фотографией
+    const pictureElement = event.target.closest('.picture'); // Найти миниатюру
+    if (pictureElement) {
+      const pictureSrc = pictureElement.querySelector('.picture__img').src.split('/').pop(); // Получить имя изображения
+      const picture = photos.find((photo) => photo.url === `photos/${pictureSrc}`); // Найти фотографию по URL
+      openBigPicture(picture);
     }
   });
 }
 
-// Функция для инициализации контейнера с фотографиями
+// Инициализация контейнера фотографий
 function initPicturesContainer(photos) {
-  const container = document.querySelector('.pictures'); // Найти контейнер с фотографиями
-  initGallery(container, photos); // Запустить галерею
+  const container = document.querySelector('.pictures'); // Поиск контейнера для фотографий
+  initGallery(container, photos);
 }
+
+// Обработчик для кнопки "Загрузить ещё"
+selectors.commentsLoader.addEventListener('click', loadMoreComments);
 
 export { initPicturesContainer };
