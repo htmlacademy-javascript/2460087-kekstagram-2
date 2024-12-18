@@ -6,7 +6,21 @@ const bigPictureCommentsList = bigPictureElement.querySelector('.big-picture__so
 const commentsLoader = bigPictureElement.querySelector('.big-picture__social .comments-loader');
 const bigPictureCaption = bigPictureElement.querySelector('.big-picture__social .social__caption');
 
+let scrollPosition = 0; // Сохраняет позицию скролла
+
 function openBigPicture(photo) {
+  scrollPosition = window.scrollY;
+
+  // Ширина полосы прокрутки
+  const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+  // Фиксированное положение страницы
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollPosition}px`;
+  document.body.style.left = '0';
+  document.body.style.width = '100%';
+  document.body.style.paddingRight = `${scrollBarWidth}px`;
+
   bigPictureElement.classList.remove('hidden');
 
   // Скрывает блоки с комментами и загрузкой
@@ -54,6 +68,16 @@ function openBigPicture(photo) {
 }
 
 function closeBigPicture() {
+  // вернуть стили
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.width = '';
+  document.body.style.paddingRight = '';
+
+  // вернуть скролл
+  window.scrollTo(0, scrollPosition);
+
   bigPictureElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
 
