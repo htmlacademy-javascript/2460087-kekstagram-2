@@ -1,5 +1,3 @@
-let scrollPosition = 0; // Сохраняет позицию скролла
-
 const bigPictureElement = document.querySelector('.big-picture');
 const bigPictureImg = bigPictureElement.querySelector('.big-picture__img img');
 const bigPictureLikes = bigPictureElement.querySelector('.big-picture__social .social__likes span');
@@ -9,8 +7,6 @@ const commentsLoader = bigPictureElement.querySelector('.big-picture__social .co
 const bigPictureCaption = bigPictureElement.querySelector('.big-picture__social .social__caption');
 
 function openBigPicture(photo) {
-  scrollPosition = window.scrollY;
-
   bigPictureElement.classList.remove('hidden');
 
   // Скрывает блоки с комментами и загрузкой
@@ -52,15 +48,26 @@ function openBigPicture(photo) {
 
     bigPictureCommentsList.appendChild(commentElement);
   });
+
+  // обработчик для закрытия при клике вне контента
+  bigPictureElement.addEventListener('click', handleOutsideClick);
 }
 
 function closeBigPicture() {
   bigPictureElement.classList.add('hidden');
-  window.scrollTo(0, scrollPosition);
   document.body.classList.remove('modal-open');
+
+  // удаление обработчика
+  bigPictureElement.removeEventListener('click', handleOutsideClick);
 }
 
-// где-то здесь удаляются другие обработчики
+function handleOutsideClick(event) {
+  if (!event.target.closest('.big-picture__img') &&
+    !event.target.closest('.big-picture__social')) {
+    closeBigPicture();
+  }
+}
+
 function closedBigPicture() {
   document.querySelector('#picture-cancel').addEventListener('click', closeBigPicture);
 
