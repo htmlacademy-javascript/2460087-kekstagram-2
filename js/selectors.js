@@ -1,3 +1,5 @@
+const selectors = initializeSelectors();
+
 // Функция для инициализации селекторов
 function initializeSelectors() {
   return {
@@ -10,8 +12,6 @@ function initializeSelectors() {
     bigPictureCaption: document.querySelector('.big-picture__social .social__caption'),
   };
 }
-
-const selectors = initializeSelectors();
 
 // Функция для обновления селекторов в случае изменения DOM
 function refreshSelectors() {
