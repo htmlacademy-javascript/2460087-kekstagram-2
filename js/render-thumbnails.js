@@ -1,3 +1,4 @@
+import { generatedPhotos } from './content-generator.js';
 
 // Создаёт DOM-элемент для одной фотографии
 
@@ -31,5 +32,4 @@ function renderThumbnails(photos) {
   const thumbnails = photos.map((photo) => createThumbnail(photo, template));
   appendThumbnails(thumbnails, picturesContainer);
 }
-
-export { renderThumbnails };
+renderThumbnails(generatedPhotos);
