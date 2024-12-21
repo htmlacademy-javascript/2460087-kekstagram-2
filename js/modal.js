@@ -25,6 +25,7 @@ function openBigPicture(photo) {
   bigPictureSelectors.element.scrollTop = 0;
   clearModal();
   populateBigPicture(photo);
+  bigPictureSelectors.element.focus();
 
   // Обработчики событий
   document.addEventListener('keydown', keydownHandler);
