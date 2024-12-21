@@ -1,21 +1,18 @@
-const selectors = initializeSelectors();
+import { BIG_PICTURE_SELECTORS } from './selectorConfig.js';
 
 // Функция для инициализации селекторов
-function initializeSelectors() {
-  return {
-    bigPictureElement: document.querySelector('.big-picture'),
-    bigPictureImg: document.querySelector('.big-picture__img img'),
-    bigPictureLikes: document.querySelector('.big-picture__social .social__likes span'),
-    bigPictureCommentsCount: document.querySelector('.big-picture__social .social__comment-count'),
-    bigPictureCommentsList: document.querySelector('.big-picture__social .social__comments'),
-    commentsLoader: document.querySelector('.big-picture__social .comments-loader'),
-    bigPictureCaption: document.querySelector('.big-picture__social .social__caption'),
-  };
-}
+const initializeSelectors = () => ({
+  bigPictureElement: document.querySelector(BIG_PICTURE_SELECTORS.element),
+  bigPictureImg: document.querySelector(BIG_PICTURE_SELECTORS.img),
+  bigPictureLikes: document.querySelector(BIG_PICTURE_SELECTORS.likes),
+  bigPictureCommentsCount: document.querySelector(BIG_PICTURE_SELECTORS.commentsCount),
+  bigPictureCommentsList: document.querySelector(BIG_PICTURE_SELECTORS.commentsList),
+  commentsLoader: document.querySelector(BIG_PICTURE_SELECTORS.loader),
+  bigPictureCaption: document.querySelector(BIG_PICTURE_SELECTORS.caption),
+  bigPictureCancel: document.querySelector(BIG_PICTURE_SELECTORS.cancel),
+});
 
-// Функция для обновления селекторов в случае изменения DOM
-function refreshSelectors() {
-  return initializeSelectors();
-}
 
-export { selectors, refreshSelectors };
+const selectors = initializeSelectors();
+
+export { selectors };

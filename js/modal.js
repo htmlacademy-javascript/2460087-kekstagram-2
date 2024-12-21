@@ -1,15 +1,14 @@
-import { selectors, refreshSelectors } from './selectors.js';
-import { toggleBodyScroll } from './util.js';
+import { selectors } from './selectors.js';
+import { toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
 
 let currentPhoto = null;
 let displayedCommentsCount = 0; // Счётчик отображенных комментариев
+const keydownHandler = (event) => handleEscapeKey(event, closeBigPicture);
+const outsideClickHandler = (event) => handleOutsideClick(event, closeBigPicture);
+const closeButtonHandler = () => closeBigPicture();
 
 // Функция для открытия полноразмерного изображения
 function openBigPicture(photo) {
-  if (!selectors.bigPictureElement) {
-    refreshSelectors();
-  }
-
   currentPhoto = photo;
   toggleBodyScroll(true);
   selectors.bigPictureElement.classList.remove('hidden');
@@ -17,8 +16,10 @@ function openBigPicture(photo) {
   clearModal();
   populateBigPicture(photo);
 
-  document.addEventListener('keydown', handleEscapeKey);
-  selectors.bigPictureElement.addEventListener('click', handleOutsideClick);
+  // Добавляем обработчики событий
+  document.addEventListener('keydown', keydownHandler);
+  selectors.bigPictureElement.addEventListener('click', outsideClickHandler);
+  selectors.bigPictureCancel.addEventListener('click', closeButtonHandler);
 }
 
 // Функция для закрытия полноразмерного изображения
@@ -26,29 +27,14 @@ function closeBigPicture() {
   toggleBodyScroll(false);
   selectors.bigPictureElement.classList.add('hidden');
 
-  document.removeEventListener('keydown', handleEscapeKey);
-  selectors.bigPictureElement.removeEventListener('click', handleOutsideClick);
-}
-
-// Обработчик клавиши Escape для закрытия окна
-function handleEscapeKey(event) {
-  if (event.key === 'Escape') {
-    closeBigPicture();
-  }
-}
-
-// Обработчик клика по области вне изображения и комментариев для закрытия окна
-function handleOutsideClick(event) {
-  if (!event.target.closest('.big-picture__img') && !event.target.closest('.big-picture__social')) {
-    closeBigPicture();
-  }
+  // Удаляем обработчики событий
+  document.removeEventListener('keydown', keydownHandler);
+  selectors.bigPictureElement.removeEventListener('click', outsideClickHandler);
+  selectors.bigPictureCancel.removeEventListener('click', closeButtonHandler);
 }
 
 // Функция для заполнения окна полноразмерного изображения данными
 function populateBigPicture(photo) {
-  if (!selectors.bigPictureElement) {
-    refreshSelectors();
-  }
 
   selectors.bigPictureImg.src = photo.url;
   selectors.bigPictureImg.alt = photo.description;
@@ -64,9 +50,7 @@ function populateBigPicture(photo) {
 
 // Функция для отображения кнопки "Загрузить комментарии"
 function toggleCommentsLoader(photo) {
-  if (!selectors.commentsLoader) {
-    refreshSelectors();
-  }
+
   const commentsCount = photo.comments.length;
   if (commentsCount > displayedCommentsCount) {
     selectors.commentsLoader.classList.remove('hidden');
@@ -78,9 +62,6 @@ function toggleCommentsLoader(photo) {
 
 // Функция для загрузки следующих 5 комментариев
 function loadMoreComments() {
-  if (!currentPhoto || !selectors.bigPictureCommentsList) {
-    refreshSelectors();
-  }
 
   const commentsCount = currentPhoto.comments.length;
   const nextComments = currentPhoto.comments.slice(displayedCommentsCount, displayedCommentsCount + 5);
@@ -110,9 +91,6 @@ function createComment(comment) {
 }
 
 function clearModal() {
-  if (!selectors.bigPictureElement) {
-    refreshSelectors();
-  }
 
   selectors.bigPictureImg.src = '';
   selectors.bigPictureLikes.textContent = '';

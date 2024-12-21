@@ -25,5 +25,18 @@ function toggleBodyScroll(isLocked) {
   }
 }
 
+// Обработчик для клавиши Escape
+function handleEscapeKey(event, callback) {
+  if (event.key === 'Escape') {
+    callback();
+  }
+}
 
-export { getRandomInteger, toggleBodyScroll };
+// Обработчик для клика вне области изображения
+function handleOutsideClick(event, callback) {
+  if (!event.target.closest('.big-picture__img') && !event.target.closest('.big-picture__social')) {
+    callback();
+  }
+}
+
+export { getRandomInteger, toggleBodyScroll, handleEscapeKey, handleOutsideClick };
