@@ -9,4 +9,16 @@ const BIG_PICTURE_SELECTORS = {
   cancel: '#picture-cancel',
 };
 
-export { BIG_PICTURE_SELECTORS };
+const IMAGE_EDITING_SELECTORS = {
+  element: '.img-upload__overlay',
+  input: '.img-upload__input',
+  preview: '.img-upload__preview',
+  controls: '.img-upload__controls',
+  hashtags: '.img-upload__hashtags',
+  comments: '.img-upload__comments',
+  cancel: '.img-upload__cancel',
+  submit: '.img-upload__submit',
+};
+
+
+export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS };

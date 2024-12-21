@@ -1,6 +1,6 @@
-import { selectors } from './selectors.js';
-import { openBigPicture, loadMoreComments } from './modal.js';
+import { openBigPicture, loadMoreComments, bigPictureSelectors } from './modal.js';
 import { generatedPhotos } from './content-generator.js';
+
 
 // Инициализация галереи
 function initGallery(container, photos) {
@@ -21,6 +21,6 @@ function initPicturesContainer(photos) {
 }
 
 // Обработчик для кнопки "Загрузить еще"
-selectors.commentsLoader?.addEventListener('click', loadMoreComments);
+bigPictureSelectors.loader?.addEventListener('click', loadMoreComments);
 
 initPicturesContainer(generatedPhotos);

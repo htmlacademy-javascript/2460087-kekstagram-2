@@ -39,4 +39,22 @@ function handleOutsideClick(event, callback) {
   }
 }
 
-export { getRandomInteger, toggleBodyScroll, handleEscapeKey, handleOutsideClick };
+// Функция для инициализации селекторов
+const initializeSelectors = (selectorsConfig) => {
+  const selectors = {};
+  for (const key in selectorsConfig) {
+    if (Object.prototype.hasOwnProperty.call(selectorsConfig, key)) {
+      selectors[key] = document.querySelector(selectorsConfig[key]);
+    }
+  }
+  return selectors;
+};
+
+
+export {
+  getRandomInteger,
+  toggleBodyScroll,
+  handleEscapeKey,
+  handleOutsideClick,
+  initializeSelectors
+};
