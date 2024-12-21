@@ -4,6 +4,7 @@ const getRandomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1
 let scrollPosition = 0; // Текущая позиция прокрутки страницы
 
 // Функция для блокировки и разблокировки прокрутки страницы
+// Если потребуется удалить, не забыть навесить класс 'modal-open' везде, где используется эта штука
 function toggleBodyScroll(isLocked) {
   if (isLocked) {
     scrollPosition = window.scrollY;
@@ -33,8 +34,10 @@ function handleEscapeKey(event, callback) {
 }
 
 // Обработчик для клика вне области изображения
-function handleOutsideClick(event, callback) {
-  if (!event.target.closest('.big-picture__img') && !event.target.closest('.big-picture__social')) {
+function handleOutsideClick(event, selectors, callback) {
+  const isClickInside = selectors.some((selector) => event.target.closest(selector));
+
+  if (!isClickInside) {
     callback();
   }
 }

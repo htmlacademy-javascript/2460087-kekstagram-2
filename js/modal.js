@@ -6,7 +6,15 @@ const bigPictureSelectors = initializeSelectors(BIG_PICTURE_SELECTORS);
 let currentPhoto = null;
 let displayedCommentsCount = 0;
 const keydownHandler = (event) => handleEscapeKey(event, closeBigPicture);
-const outsideClickHandler = (event) => handleOutsideClick(event, closeBigPicture);
+
+const outsideClickHandler = (event) => {
+  handleOutsideClick(event, [
+    '.big-picture__img',
+    '.social',
+    '.big-picture__cancel'
+  ], closeBigPicture);
+};
+
 const closeButtonHandler = () => closeBigPicture();
 
 // Функция для открытия полноразмерного изображения

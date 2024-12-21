@@ -1,9 +1,9 @@
 import { IMAGE_EDITING_SELECTORS } from './selectorConfig.js';
-import { initializeSelectors, toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
+import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
 
 const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const keydownHandler = (event) => handleEscapeKey(event, closeForm);
-const outsideClickHandler = (event) => handleOutsideClick(event, closeForm);
+
 const closeButtonHandler = () => closeForm();
 
 // РАБОЧИЕ ОБЛАСТИ
@@ -33,11 +33,9 @@ function initializeForm() {
   toggleBodyScroll(true);
   imageEditingSelectors.element.scrollTop = 0;
   imageEditingSelectors.element.classList.remove('hidden');
-  document.body.classList.add('modal-open');
 
   // Обработчики событий
   document.addEventListener('keydown', keydownHandler);
-  imageEditingSelectors.element.addEventListener('click', outsideClickHandler);
   imageEditingSelectors.cancel.addEventListener('click', closeButtonHandler);
 }
 
@@ -45,11 +43,9 @@ function initializeForm() {
 function closeForm() {
   toggleBodyScroll(false);
   imageEditingSelectors.element.classList.add('hidden');
-  document.body.classList.remove('modal-open');
 
   // Удаление обработчиков
   document.removeEventListener('keydown', keydownHandler);
-  imageEditingSelectors.element.removeEventListener('click', outsideClickHandler);
   imageEditingSelectors.cancel.removeEventListener('click', closeButtonHandler);
 }
 
