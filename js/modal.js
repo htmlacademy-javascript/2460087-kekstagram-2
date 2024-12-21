@@ -1,6 +1,5 @@
 import { BIG_PICTURE_SELECTORS } from './selectorConfig.js';
-import { initializeSelectors } from './util.js';
-import { toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
+import { initializeSelectors, toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
 
 const bigPictureSelectors = initializeSelectors(BIG_PICTURE_SELECTORS);
 

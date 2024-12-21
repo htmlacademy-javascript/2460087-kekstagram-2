@@ -1,4 +1,10 @@
-import { toggleBodyScroll } from './selectors.js';
+import { IMAGE_EDITING_SELECTORS } from './selectorConfig.js';
+import { initializeSelectors, toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
+
+const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
+const keydownHandler = (event) => handleEscapeKey(event, closeForm);
+const outsideClickHandler = (event) => handleOutsideClick(event, closeForm);
+const closeButtonHandler = () => closeForm();
 
 // РАБОЧИЕ ОБЛАСТИ
 // форма с id="upload-select-image" , которая включает поле для выбора файла (input с id="upload-file") и кнопку для отправки изображения
@@ -9,24 +15,51 @@ import { toggleBodyScroll } from './selectors.js';
 // шаблоны для сообщений об ошибке и успешной загрузке: error, success, data-error
 //
 
+// Выбор изображения для загрузки осуществляется с помощью стандартного контрола загрузки файла.img - upload__input, который стилизован под букву «О» в логотипе.После выбора изображения(изменения значения поля.img - upload__input), показывается форма редактирования изображения.У элемента.img - upload__overlay удаляется класс hidden, а body задаётся класс modal - open.
+
+// После выбора изображения пользователем с помощью стандартного контрола загрузки файла.img - upload__input, нужно подставить его в форму редактирования вместо тестового изображения в блок предварительного просмотра и в превью эффектов.
+
+// 1.3 Закрытие формы редактирования изображения производится либо нажатием на кнопку.img - upload__cancel, либо нажатием клавиши Esc.Элементу.img - upload__overlay возвращается класс hidden.У элемента body удаляется класс modal - open.
+
+// Открытие формы после выбора файла
+imageEditingSelectors.input.addEventListener('change', () => {
+  if (imageEditingSelectors.input.files.length > 0) {
+    initializeForm();
+  }
+});
+
 // Инициализация формы
 function initializeForm() {
   toggleBodyScroll(true);
+  imageEditingSelectors.element.scrollTop = 0;
+  imageEditingSelectors.element.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+
+  // Обработчики событий
+  document.addEventListener('keydown', keydownHandler);
+  imageEditingSelectors.element.addEventListener('click', outsideClickHandler);
+  imageEditingSelectors.cancel.addEventListener('click', closeButtonHandler);
 }
 
-initializeForm();
+// Закрытие формы
+function closeForm() {
+  toggleBodyScroll(false);
+  imageEditingSelectors.element.classList.add('hidden');
+  document.body.classList.remove('modal-open');
 
-// Валидация данных
-function validateFormData(params) {
+  // Удаление обработчиков
+  document.removeEventListener('keydown', keydownHandler);
+  imageEditingSelectors.element.removeEventListener('click', outsideClickHandler);
+  imageEditingSelectors.cancel.removeEventListener('click', closeButtonHandler);
 }
 
-// Отправка данных на сервер
-function submitFormData(params) {
-}
+// // Валидация данных
+// function validateFormData(params) {
+// }
 
-// Закрытиt формы
-function closeForm(params) {
-}
+// // Отправка данных на сервер
+// function submitFormData(params) {
+// }
 
 // 2. ПРОПИСАТЬ АТРИБУТЫ
 
