@@ -18,6 +18,9 @@ const IMAGE_EDITING_SELECTORS = {
   comments: '.text__description',
   cancel: '.img-upload__cancel',
   submit: '.img-upload__submit',
+  form: '.img-upload__form',
+  hashtagsInput: '.text__hashtags',
+  captionInput: '.text__description',
 };
 
 
