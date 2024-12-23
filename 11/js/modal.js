@@ -106,6 +106,7 @@ function clearModal() {
   bigPictureSelectors.caption.textContent = '';
   bigPictureSelectors.commentsList.innerHTML = '';
   bigPictureSelectors.loader.classList.add('hidden');
+  bigPictureSelectors.input.value = '';
 }
 
 export {
