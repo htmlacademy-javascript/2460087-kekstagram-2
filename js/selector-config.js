@@ -7,6 +7,7 @@ const BIG_PICTURE_SELECTORS = {
   loader: '.big-picture__social .comments-loader',
   caption: '.big-picture__social .social__caption',
   cancel: '#picture-cancel',
+  input: '.social__footer-text'
 };
 
 const IMAGE_EDITING_SELECTORS = {
