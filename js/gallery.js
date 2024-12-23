@@ -1,6 +1,6 @@
-import { selectors } from './selectors.js';
-import { openBigPicture, loadMoreComments } from './modal.js';
+import { openBigPicture, loadMoreComments, bigPictureSelectors } from './modal.js';
 import { generatedPhotos } from './content-generator.js';
+import { picturesContainer } from './render-thumbnails.js';
 
 // Инициализация галереи
 function initGallery(container, photos) {
@@ -16,11 +16,18 @@ function initGallery(container, photos) {
 
 // Инициализация контейнера фотографий
 function initPicturesContainer(photos) {
-  const container = document.querySelector('.pictures');
-  initGallery(container, photos);
+  initGallery(picturesContainer, photos);
 }
 
 // Обработчик для кнопки "Загрузить еще"
-selectors.commentsLoader?.addEventListener('click', loadMoreComments);
+function initLoadMoreCommentsHandler() {
+  bigPictureSelectors.loader?.addEventListener('click', loadMoreComments);
+}
 
-initPicturesContainer(generatedPhotos);
+// Инициализация всех обработчиков
+function init() {
+  initPicturesContainer(generatedPhotos);
+  initLoadMoreCommentsHandler();
+}
+
+init();

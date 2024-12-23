@@ -4,6 +4,7 @@ const getRandomInteger = (min, max) => Math.floor(Math.random() * (max - min + 1
 let scrollPosition = 0; // Текущая позиция прокрутки страницы
 
 // Функция для блокировки и разблокировки прокрутки страницы
+// Если потребуется удалить, не забыть навесить класс 'modal-open' везде, где используется эта штука
 function toggleBodyScroll(isLocked) {
   if (isLocked) {
     scrollPosition = window.scrollY;
@@ -25,5 +26,38 @@ function toggleBodyScroll(isLocked) {
   }
 }
 
+// Обработчик для клавиши Escape
+function handleEscapeKey(event, callback) {
+  if (event.key === 'Escape') {
+    callback();
+  }
+}
 
-export { getRandomInteger, toggleBodyScroll };
+// Обработчик для клика вне области изображения
+function handleOutsideClick(event, selectors, callback) {
+  const isClickInside = selectors.some((selector) => event.target.closest(selector));
+
+  if (!isClickInside) {
+    callback();
+  }
+}
+
+// Функция для инициализации селекторов
+const initializeSelectors = (selectorsConfig) => {
+  const selectors = {};
+  for (const key in selectorsConfig) {
+    if (Object.prototype.hasOwnProperty.call(selectorsConfig, key)) {
+      selectors[key] = document.querySelector(selectorsConfig[key]);
+    }
+  }
+  return selectors;
+};
+
+
+export {
+  getRandomInteger,
+  toggleBodyScroll,
+  handleEscapeKey,
+  handleOutsideClick,
+  initializeSelectors
+};
