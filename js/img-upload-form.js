@@ -1,4 +1,4 @@
-import { initializeValidators, } from './validate.js';
+import { initializeValidators } from './validate.js';
 import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
 
@@ -6,14 +6,14 @@ const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const keydownHandler = (event) => handleEscapeKey(event, () => closeForm(imageEditingSelectors));
 const closeButtonHandler = () => closeForm(imageEditingSelectors);
 
-
+// Инициализация валидатора
 const pristine = initializeValidators(
   imageEditingSelectors.form,
   imageEditingSelectors.hashtagsInput,
   imageEditingSelectors.captionInput
 );
 
-// Функция для обработки хэштегов
+// Функции для обработки хэштегов
 function processHashtags(input) {
   const hashtags = input.split(' ');
 
@@ -28,36 +28,18 @@ function processHashtags(input) {
   return processedHashtags.join(' ');
 }
 
-// Функция для обработки ввода хэштегов
 function handleHashtagsInput(event) {
   const processedValue = processHashtags(event.target.value);
   event.target.value = processedValue;
 }
 
-
-// Валидация формы при попытке отправить
-imageEditingSelectors.form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  if (pristine.validate()) {
-    imageEditingSelectors.form.submit();
-  }
-});
-
-// Открытие формы после выбора файла
-imageEditingSelectors.input.addEventListener('change', () => {
-  if (imageEditingSelectors.input.files.length > 0) {
-    initializeForm(imageEditingSelectors);
-  }
-});
-
-// Блокировка клавиши esc
+// Функции для обработки событий
 function stopEscPropagation(event) {
   if (event.key === 'Escape') {
     event.stopPropagation();
   }
 }
 
-// Обработчики событий
 function toggleHandlers(selectors, addHandlers) {
   const method = addHandlers ? 'addEventListener' : 'removeEventListener';
 
@@ -79,7 +61,7 @@ function toggleHandlers(selectors, addHandlers) {
   }
 }
 
-// Инициализация формы
+// Функции для работы с формой
 function initializeForm(selectors) {
   toggleHandlers(selectors, true);
   toggleBodyScroll(true);
@@ -87,8 +69,6 @@ function initializeForm(selectors) {
   selectors.element.classList.remove('hidden');
 }
 
-
-// Закрытие формы
 function closeForm(selectors) {
   toggleHandlers(selectors, false);
   toggleBodyScroll(false);
@@ -103,3 +83,21 @@ function closeForm(selectors) {
     resetForm.reset();
   }
 }
+
+// Обработчики событий
+imageEditingSelectors.form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  if (pristine.validate()) {
+    imageEditingSelectors.form.submit();
+  }
+});
+
+imageEditingSelectors.input.addEventListener('change', () => {
+  if (imageEditingSelectors.input.files.length > 0) {
+    initializeForm(imageEditingSelectors);
+  }
+});
+
+export {
+  imageEditingSelectors
+};

@@ -1,34 +1,16 @@
 import { BIG_PICTURE_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
 
-const bigPictureSelectors = initializeSelectors(BIG_PICTURE_SELECTORS);
 const NUMBER_OF_COMMENTS_UPLOADED = 5;
+
+const bigPictureSelectors = initializeSelectors(BIG_PICTURE_SELECTORS);
 
 let currentPhoto = null;
 let displayedCommentsCount = 0;
+
 const keydownHandler = (event) => handleEscapeKey(event, closeBigPicture);
 
-// Обработчики событий для открытия и закрытия
-function toggleBigPictureHandlers(selectors, addHandlers) {
-  const method = addHandlers ? 'addEventListener' : 'removeEventListener';
-
-  // Для обработчика клика по внешним элементам
-  selectors.element[method]('click', (event) => {
-    // Проверка клика вне области окна
-    handleOutsideClick(event, [
-      '.big-picture__img',
-      '.social',
-      '.big-picture__cancel'
-    ], closeBigPicture);
-  });
-
-  // для клавиши ESC
-  document[method]('keydown', keydownHandler);
-
-  // для кнопки закрытия
-  selectors.cancel[method]('click', closeBigPicture);
-}
-
+// Функции для открытия и закрытия окна
 function openBigPicture(photo) {
   currentPhoto = photo;
   toggleBodyScroll(true);
@@ -48,6 +30,27 @@ function closeBigPicture() {
 
   // Удаление обработчиков
   toggleBigPictureHandlers(bigPictureSelectors, false);
+}
+
+// Функция для управления обработчиками событий
+function toggleBigPictureHandlers(selectors, addHandlers) {
+  const method = addHandlers ? 'addEventListener' : 'removeEventListener';
+
+  // Для обработчика клика по внешним элементам
+  selectors.element[method]('click', (event) => {
+    // Проверка клика вне области окна
+    handleOutsideClick(event, [
+      '.big-picture__img',
+      '.social',
+      '.big-picture__cancel'
+    ], closeBigPicture);
+  });
+
+  // для клавиши ESC
+  document[method]('keydown', keydownHandler);
+
+  // для кнопки закрытия
+  selectors.cancel[method]('click', closeBigPicture);
 }
 
 // Функция для заполнения окна данными

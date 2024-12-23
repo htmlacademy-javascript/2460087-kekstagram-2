@@ -1,9 +1,14 @@
 import { generatedPhotos } from './content-generator.js';
 
-// Создаёт DOM-элемент для одной фотографии
+// Селекторы
+const picturesContainer = document.querySelector('.pictures');
+const template = document.querySelector('#picture').content;
 
-function createThumbnail({ url, description, likes, comments }, template) {
-  const pictureElement = template.cloneNode(true);
+// Функции
+
+// Создаёт DOM-элемент для одной фотографии
+function createThumbnail({ url, description, likes, comments }, thumbnailTemplate) {
+  const pictureElement = thumbnailTemplate.cloneNode(true);
 
   const pictureImg = pictureElement.querySelector('.picture__img');
   const pictureLikes = pictureElement.querySelector('.picture__likes');
@@ -26,10 +31,11 @@ function appendThumbnails(thumbnails, container) {
 
 // Функция рендера
 function renderThumbnails(photos) {
-  const picturesContainer = document.querySelector('.pictures');
-  const template = document.querySelector('#picture').content;
-
   const thumbnails = photos.map((photo) => createThumbnail(photo, template));
   appendThumbnails(thumbnails, picturesContainer);
 }
+
+// Вызов рендера
 renderThumbnails(generatedPhotos);
+
+export { picturesContainer };
