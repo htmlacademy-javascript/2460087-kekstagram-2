@@ -3,7 +3,6 @@ import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.j
 
 const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const keydownHandler = (event) => handleEscapeKey(event, closeForm);
-
 const closeButtonHandler = () => closeForm();
 
 // Открытие формы после выбора файла
@@ -12,6 +11,13 @@ imageEditingSelectors.input.addEventListener('change', () => {
     initializeForm();
   }
 });
+
+// Блокировка клавиши esc
+function stopEscPropagation(event) {
+  if (event.key === 'Escape') {
+    event.stopPropagation(); // Блокируем всплытие события
+  }
+}
 
 // Инициализация формы
 function initializeForm() {
@@ -23,19 +29,11 @@ function initializeForm() {
   // Обработчики событий
   document.addEventListener('keydown', keydownHandler);
   imageEditingSelectors.cancel.addEventListener('click', closeButtonHandler);
+  imageEditingSelectors.hashtags.addEventListener('keydown', stopEscPropagation);
+  imageEditingSelectors.comments.addEventListener('keydown', stopEscPropagation);
 }
 
-// Остановить всплытие события на полях
-function stopEscPropagation(event) {
-  if (event.key === 'Escape') {
-    event.stopPropagation(); // Блокируем всплытие события
-  }
-}
-
-imageEditingSelectors.hashtags.addEventListener('keydown', stopEscPropagation);
-imageEditingSelectors.comments.addEventListener('keydown', stopEscPropagation);
-
-
+// Закрытие формы
 function closeForm() {
   toggleBodyScroll(false);
   imageEditingSelectors.element.classList.add('hidden');
@@ -52,11 +50,34 @@ function closeForm() {
   // Удаление обработчиков
   document.removeEventListener('keydown', keydownHandler);
   imageEditingSelectors.cancel.removeEventListener('click', closeButtonHandler);
+  imageEditingSelectors.hashtags.removeEventListener('keydown', stopEscPropagation);
+  imageEditingSelectors.comments.removeEventListener('keydown', stopEscPropagation);
 }
 
-// // Валидация данных
-// function validateFormData(params) {
-// }
+// ВАЛИДАЦИЯ
+
+
+function validateForm() {
+  const imgUploadForm = document.querySelector('#upload-select-image');
+  const pristine = new Pristine(imgUploadForm);
+
+  imgUploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const valid = pristine.validate();
+    console.log(`Результат валидации: ${valid}`);
+
+    if (valid) {
+      console.log('Форма прошла валидацию. Отправляем...');
+      imgUploadForm.submit();
+    } else {
+      console.log('Форма не прошла валидацию. Проверьте поля.');
+    }
+  });
+}
+
+
+validateForm();
 
 // // Отправка данных на сервер
 // function submitFormData(params) {
