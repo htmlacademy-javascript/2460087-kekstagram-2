@@ -2,35 +2,32 @@ import { BIG_PICTURE_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey, handleOutsideClick } from './util.js';
 
 const bigPictureSelectors = initializeSelectors(BIG_PICTURE_SELECTORS);
+const NUMBER_OF_COMMENTS_UPLOADED = 5;
 
 let currentPhoto = null;
 let displayedCommentsCount = 0;
 const keydownHandler = (event) => handleEscapeKey(event, closeBigPicture);
 
-const outsideClickHandler = (event) => {
-  handleOutsideClick(event, [
-    '.big-picture__img',
-    '.social',
-    '.big-picture__cancel'
-  ], closeBigPicture);
-};
-
-const closeButtonHandler = () => closeBigPicture();
-
 // Обработчики событий для открытия и закрытия
 function toggleBigPictureHandlers(selectors, addHandlers) {
   const method = addHandlers ? 'addEventListener' : 'removeEventListener';
 
+  // Для обработчика клика по внешним элементам
+  selectors.element[method]('click', (event) => {
+    // Проверка клика вне области окна
+    handleOutsideClick(event, [
+      '.big-picture__img',
+      '.social',
+      '.big-picture__cancel'
+    ], closeBigPicture);
+  });
+
   // для клавиши ESC
   document[method]('keydown', keydownHandler);
 
-  // для клика по изображению
-  selectors.element[method]('click', outsideClickHandler);
-
   // для кнопки закрытия
-  selectors.cancel[method]('click', closeButtonHandler);
+  selectors.cancel[method]('click', closeBigPicture);
 }
-
 
 function openBigPicture(photo) {
   currentPhoto = photo;
@@ -79,7 +76,7 @@ function toggleCommentsLoader(photo) {
 // Функция для загрузки следующих 5 комментариев
 function loadMoreComments() {
   const commentsCount = currentPhoto.comments.length;
-  const nextComments = currentPhoto.comments.slice(displayedCommentsCount, displayedCommentsCount + 5);
+  const nextComments = currentPhoto.comments.slice(displayedCommentsCount, displayedCommentsCount + NUMBER_OF_COMMENTS_UPLOADED);
   nextComments.forEach(createComment);
   displayedCommentsCount += nextComments.length;
   bigPictureSelectors.commentsCount.textContent = `${displayedCommentsCount} из ${commentsCount} комментариев`;
@@ -88,21 +85,14 @@ function loadMoreComments() {
 
 // Функция для создания одного комментария и добавления его в DOM
 function createComment(comment) {
-  const commentElement = document.createElement('li');
-  commentElement.classList.add('social__comment');
+  const commentHTML = `
+    <li class="social__comment">
+      <img class="social__picture" src="${comment.avatar}" alt="${comment.name}">
+      <p class="social__text">${comment.message}</p>
+    </li>
+  `;
 
-  const commentAvatar = document.createElement('img');
-  commentAvatar.classList.add('social__picture');
-  commentAvatar.src = comment.avatar;
-  commentAvatar.alt = comment.name;
-
-  const commentText = document.createElement('p');
-  commentText.classList.add('social__text');
-  commentText.textContent = comment.message;
-
-  commentElement.appendChild(commentAvatar);
-  commentElement.appendChild(commentText);
-  bigPictureSelectors.commentsList.appendChild(commentElement);
+  bigPictureSelectors.commentsList.insertAdjacentHTML('beforeend', commentHTML);
 }
 
 // Функция для очистки модального окна
