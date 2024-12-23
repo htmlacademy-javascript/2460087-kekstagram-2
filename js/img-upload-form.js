@@ -1,4 +1,4 @@
-import { initializeValidators } from './validate.js';
+import { initializeValidators, } from './validate.js';
 import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
 
@@ -12,6 +12,28 @@ const pristine = initializeValidators(
   imageEditingSelectors.hashtagsInput,
   imageEditingSelectors.captionInput
 );
+
+// Функция для обработки хэштегов
+function processHashtags(input) {
+  const hashtags = input.split(' ');
+
+  const processedHashtags = hashtags.map((tag) => {
+    const cleanedTag = tag.trim();
+    if (cleanedTag && cleanedTag[0] !== '#') {
+      return `#${cleanedTag}`;
+    }
+    return cleanedTag;
+  });
+
+  return processedHashtags.join(' ');
+}
+
+// Функция для обработки ввода хэштегов
+function handleHashtagsInput(event) {
+  const processedValue = processHashtags(event.target.value);
+  event.target.value = processedValue;
+}
+
 
 // Валидация формы при попытке отправить
 imageEditingSelectors.form.addEventListener('submit', (event) => {
@@ -39,12 +61,23 @@ function stopEscPropagation(event) {
 function toggleHandlers(selectors, addHandlers) {
   const method = addHandlers ? 'addEventListener' : 'removeEventListener';
 
+  // для клавиши ESC
   document[method]('keydown', keydownHandler);
+
+  // для кнопки закрытия формы
   selectors.cancel[method]('click', closeButtonHandler);
+
+  // для хэштегов и комментариев
   selectors.hashtags[method]('keydown', stopEscPropagation);
   selectors.comments[method]('keydown', stopEscPropagation);
-}
 
+  // для ввода хэштегов
+  if (addHandlers) {
+    selectors.hashtags.addEventListener('input', handleHashtagsInput);
+  } else {
+    selectors.hashtags.removeEventListener('input', handleHashtagsInput);
+  }
+}
 
 // Инициализация формы
 function initializeForm(selectors) {
@@ -70,4 +103,3 @@ function closeForm(selectors) {
     resetForm.reset();
   }
 }
-
