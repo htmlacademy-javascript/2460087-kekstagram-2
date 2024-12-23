@@ -17,7 +17,21 @@ const outsideClickHandler = (event) => {
 
 const closeButtonHandler = () => closeBigPicture();
 
-// Функция для открытия полноразмерного изображения
+// Обработчики событий для открытия и закрытия
+function toggleBigPictureHandlers(selectors, addHandlers) {
+  const method = addHandlers ? 'addEventListener' : 'removeEventListener';
+
+  // для клавиши ESC
+  document[method]('keydown', keydownHandler);
+
+  // для клика по изображению
+  selectors.element[method]('click', outsideClickHandler);
+
+  // для кнопки закрытия
+  selectors.cancel[method]('click', closeButtonHandler);
+}
+
+
 function openBigPicture(photo) {
   currentPhoto = photo;
   toggleBodyScroll(true);
@@ -27,24 +41,19 @@ function openBigPicture(photo) {
   populateBigPicture(photo);
   bigPictureSelectors.element.focus();
 
-  // Обработчики событий
-  document.addEventListener('keydown', keydownHandler);
-  bigPictureSelectors.element.addEventListener('click', outsideClickHandler);
-  bigPictureSelectors.cancel.addEventListener('click', closeButtonHandler);
+  // Добавление обработчиков
+  toggleBigPictureHandlers(bigPictureSelectors, true);
 }
 
-// Функция для закрытия полноразмерного изображения
 function closeBigPicture() {
   toggleBodyScroll(false);
   bigPictureSelectors.element.classList.add('hidden');
 
   // Удаление обработчиков
-  document.removeEventListener('keydown', keydownHandler);
-  bigPictureSelectors.element.removeEventListener('click', outsideClickHandler);
-  bigPictureSelectors.cancel.removeEventListener('click', closeButtonHandler);
+  toggleBigPictureHandlers(bigPictureSelectors, false);
 }
 
-// Функция для заполнения окна полноразмерного изображения данными
+// Функция для заполнения окна данными
 function populateBigPicture(photo) {
   bigPictureSelectors.img.src = photo.url;
   bigPictureSelectors.img.alt = photo.description;
