@@ -7,7 +7,7 @@ const template = document.querySelector('#picture').content;
 // Функции
 
 // Создаёт DOM-элемент для одной фотографии
-function createThumbnail({ url, description, likes, comments }, thumbnailTemplate) {
+const createThumbnail = ({ url, description, likes, comments }, thumbnailTemplate) => {
   const pictureElement = thumbnailTemplate.cloneNode(true);
 
   const pictureImg = pictureElement.querySelector('.picture__img');
@@ -20,20 +20,20 @@ function createThumbnail({ url, description, likes, comments }, thumbnailTemplat
   pictureComments.textContent = comments.length;
 
   return pictureElement;
-}
+};
 
 // Добавляет все миниатюры в контейнер
-function appendThumbnails(thumbnails, container) {
+const appendThumbnails = (thumbnails, container) => {
   const fragment = document.createDocumentFragment();
   thumbnails.forEach((thumbnail) => fragment.appendChild(thumbnail));
   container.appendChild(fragment);
-}
+};
 
 // Функция рендера
-function renderThumbnails(photos) {
+const renderThumbnails = (photos) => {
   const thumbnails = photos.map((photo) => createThumbnail(photo, template));
   appendThumbnails(thumbnails, picturesContainer);
-}
+};
 
 // Вызов рендера
 renderThumbnails(generatedPhotos);

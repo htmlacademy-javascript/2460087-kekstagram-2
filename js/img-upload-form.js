@@ -40,43 +40,40 @@ function stopEscPropagation(event) {
   }
 }
 
-function toggleHandlers(selectors, addHandlers) {
-  const method = addHandlers ? 'addEventListener' : 'removeEventListener';
-
-  // для клавиши ESC
-  document[method]('keydown', keydownHandler);
-
-  // для кнопки закрытия формы
-  selectors.cancel[method]('click', closeButtonHandler);
-
-  // для хэштегов и комментариев
-  selectors.hashtags[method]('keydown', stopEscPropagation);
-  selectors.comments[method]('keydown', stopEscPropagation);
-
-  // для ввода хэштегов
-  if (addHandlers) {
-    selectors.hashtags.addEventListener('input', handleHashtagsInput);
-  } else {
-    selectors.hashtags.removeEventListener('input', handleHashtagsInput);
-  }
-}
-
-// Функции для работы с формой
+// Открыть форму
 function initializeForm(selectors) {
-  toggleHandlers(selectors, true);
+  // для клавиши ESC
+  document.addEventListener('keydown', keydownHandler);
+  // для кнопки закрытия формы
+  selectors.cancel.addEventListener('click', closeButtonHandler);
+  // для хэштегов и комментариев
+  selectors.hashtags.addEventListener('keydown', stopEscPropagation);
+  selectors.comments.addEventListener('keydown', stopEscPropagation);
+  // для ввода хэштегов
+  selectors.hashtags.addEventListener('input', handleHashtagsInput);
+  // отключить прокрутку страницы
   toggleBodyScroll(true);
-  selectors.element.scrollTop = 0;
+  // Сбросить скролл и показать форму
   selectors.element.classList.remove('hidden');
 }
 
+// Функция закрытия формы
 function closeForm(selectors) {
-  toggleHandlers(selectors, false);
+  // для клавиши ESC
+  document.removeEventListener('keydown', keydownHandler);
+  // для кнопки закрытия формы
+  selectors.cancel.removeEventListener('click', closeButtonHandler);
+  // для хэштегов и комментариев
+  selectors.hashtags.removeEventListener('keydown', stopEscPropagation);
+  selectors.comments.removeEventListener('keydown', stopEscPropagation);
+  // для ввода хэштегов
+  selectors.hashtags.removeEventListener('input', handleHashtagsInput);
+  // Прокрутка страницы
   toggleBodyScroll(false);
+  // Скрыть форму
   selectors.element.classList.add('hidden');
-
   // Сброс значения поля выбора файла
   selectors.input.value = '';
-
   // Сброс значений других полей формы
   const resetForm = selectors.element.querySelector('#upload-select-image');
   if (resetForm) {
@@ -97,7 +94,3 @@ imageEditingSelectors.input.addEventListener('change', () => {
     initializeForm(imageEditingSelectors);
   }
 });
-
-export {
-  imageEditingSelectors
-};

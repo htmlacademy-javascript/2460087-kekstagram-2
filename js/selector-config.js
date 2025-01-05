@@ -24,5 +24,11 @@ const IMAGE_EDITING_SELECTORS = {
   captionInput: '.text__description',
 };
 
+const SCALE_SELECTORS = {
+  smallerButton: '.scale__control--smaller',
+  biggerButton: '.scale__control--bigger',
+  valueInput: '.scale__control--value',
+  previewImage: '.img-upload__preview img',
+};
 
-export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS };
+export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS, SCALE_SELECTORS };
