@@ -1,6 +1,7 @@
 import { initializeValidators } from './validate.js';
 import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
+import { scaleSelectors, updateScale, handleSmallerButtonClick, handleBiggerButtonClick, START_SCALE } from './scale.js';
 
 const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const keydownHandler = (event) => handleEscapeKey(event, () => closeForm(imageEditingSelectors));
@@ -55,6 +56,13 @@ function initializeForm(selectors) {
   toggleBodyScroll(true);
   // Сбросить скролл и показать форму
   selectors.element.classList.remove('hidden');
+
+  // Начальный масштаб
+  updateScale(START_SCALE);
+
+  // обработчики для изменения масштаба
+  scaleSelectors.smallerButton.addEventListener('click', handleSmallerButtonClick);
+  scaleSelectors.biggerButton.addEventListener('click', handleBiggerButtonClick);
 }
 
 // Функция закрытия формы
@@ -79,6 +87,10 @@ function closeForm(selectors) {
   if (resetForm) {
     resetForm.reset();
   }
+
+  // Удаление обработчиков масштабирования при закрытии формы
+  scaleSelectors.smallerButton.removeEventListener('click', handleSmallerButtonClick);
+  scaleSelectors.biggerButton.removeEventListener('click', handleBiggerButtonClick);
 }
 
 // Обработчики событий
@@ -91,6 +103,6 @@ imageEditingSelectors.form.addEventListener('submit', (event) => {
 
 imageEditingSelectors.input.addEventListener('change', () => {
   if (imageEditingSelectors.input.files.length > 0) {
-    initializeForm(imageEditingSelectors);
+    initializeForm(imageEditingSelectors); // Открытие формы и подключение обработчиков масштабирования
   }
 });
