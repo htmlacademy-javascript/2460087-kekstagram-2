@@ -31,4 +31,12 @@ const SCALE_SELECTORS = {
   previewImage: '.img-upload__preview img',
 };
 
-export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS, SCALE_SELECTORS };
+const SLIDER_SELECTORS = {
+  effectLevel: '.img-upload__effect-level', // Контейнер слайдера
+  effectLevelValue: '.effect-level__value', // Поле для записи значения
+  effectLevelSlider: '.effect-level__slider', // Сам слайдер
+  effectsList: '.effects__list', // Список эффектов
+  effectRadioButtons: '.effects__radio', // Радиокнопки для переключения эффектов
+};
+
+export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS, SCALE_SELECTORS, SLIDER_SELECTORS };
