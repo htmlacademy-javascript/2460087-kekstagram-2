@@ -93,7 +93,6 @@ function closeForm(selectors) {
   if (resetForm) {
     resetForm.reset();
   }
-
   // Удаление обработчиков масштабирования при закрытии формы
   scaleSelectors.smallerButton.removeEventListener('click', handleSmallerButtonClick);
   scaleSelectors.biggerButton.removeEventListener('click', handleBiggerButtonClick);

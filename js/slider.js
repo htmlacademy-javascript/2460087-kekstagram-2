@@ -1,78 +1,80 @@
 import { initializeSelectors } from './util';
 import { IMAGE_EDITING_SELECTORS } from './selector-config';
 
-// Вспомогательные функции
-const initializeSlider = (slider) => {
-  if (slider.noUiSlider) { // Проверка, был ли слайдер уже инициализирован
-    return;
-  }
-  noUiSlider.create(slider, {
-    start: 1,
-    range: { min: 0, max: 1 },
-    step: 0.1,
+const EFFECTS = {
+  default: { filter: null, range: { min: 0, max: 1 }, start: 1, step: 0.1, unit: '' },
+  chrome: { filter: 'grayscale', range: { min: 0, max: 1 }, start: 1, step: 0.1, unit: '' },
+  sepia: { filter: 'sepia', range: { min: 0, max: 1 }, start: 1, step: 0.1, unit: '' },
+  marvin: { filter: 'invert', range: { min: 0, max: 100 }, start: 100, step: 1, unit: '%' },
+  phobos: { filter: 'blur', range: { min: 0, max: 3 }, start: 3, step: 0.1, unit: 'px' },
+  heat: { filter: 'brightness', range: { min: 1, max: 3 }, start: 3, step: 0.1, unit: '' },
+};
+
+const setSliderEffect = (effectName) => EFFECTS[effectName] || EFFECTS.default;
+
+const setSliderStatus = (selectors, effect) => {
+  selectors.effectLevel.classList.toggle('hidden', effect.filter === null);
+};
+
+const updateSlider = (selectors, effect) => {
+  selectors.effectLevelSlider.noUiSlider.off(); // Удаляем предыдущие обработчики
+  selectors.effectLevelSlider.noUiSlider.on('update', () => {
+    const value = +selectors.effectLevelSlider.noUiSlider.get();
+    selectors.effectLevelValue.value = value;
+    selectors.previewImage.style.filter = effect.filter
+      ? `${effect.filter}(${value}${effect.unit})`
+      : '';
   });
 };
 
-const getSelectedEffect = () => document.querySelector('input[name="effect"]:checked').value;
+const createSlider = (selectors, effectName) => {
+  const effect = setSliderEffect(effectName);
+  setSliderStatus(selectors, effect);
 
-const getFilterValue = (effect, value) => {
-  switch (effect) {
-    case 'chrome': return `grayscale(${value})`;
-    case 'sepia': return `sepia(${value})`;
-    case 'marvin': return `invert(${value * 100}%)`;
-    case 'phobos': return `blur(${value * 3}px)`;
-    case 'heat': return `brightness(${value * 3})`;
-    default: return '';
-  }
+  noUiSlider.create(selectors.effectLevelSlider, {
+    range: effect.range,
+    start: effect.start,
+    step: effect.step,
+    connect: 'lower',
+  });
+
+  updateSlider(selectors, effect);
 };
 
-const applyFilter = (selectors, filterValue) => {
-  selectors.previewImage.style.filter = filterValue;
-  selectors.effectLevelValue.textContent = filterValue;
+const updateSliderOptions = (selectors, effectName) => {
+  const effect = setSliderEffect(effectName);
+  setSliderStatus(selectors, effect);
+
+  selectors.effectLevelSlider.noUiSlider.updateOptions({
+    range: effect.range,
+    start: effect.start,
+    step: effect.step,
+  });
+
+  updateSlider(selectors, effect);
 };
 
-const onSliderUpdate = (selectors) => (values, handle) => {
-  const value = values[handle];
-  const currentEffect = getSelectedEffect();
-  const filterValue = getFilterValue(currentEffect, value);
-
-  applyFilter(selectors, filterValue);
-};
-
-const onEffectChange = (selectors) => () => {
-  const selectedEffect = getSelectedEffect();
-  if (selectedEffect === 'original') {
-    selectors.previewImage.style.filter = '';
-    selectors.effectLevel.classList.add('hidden');
+const onEffectChange = (selectors) => (event) => {
+  const effectName = event.target.value;
+  if (!selectors.effectLevelSlider.noUiSlider) {
+    createSlider(selectors, effectName);
   } else {
-    selectors.effectLevel.classList.remove('hidden');
-    selectors.effectLevelSlider.noUiSlider.set(1);
+    updateSliderOptions(selectors, effectName);
   }
 };
 
-// Инициализация функции
 const initializeApp = () => {
   const selectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
   selectors.previewImage = document.querySelector('.img-upload__preview img');
   selectors.effectRadioButtons = document.querySelectorAll(IMAGE_EDITING_SELECTORS.effectRadioButtons);
 
-  // Инициализация слайдера
-  initializeSlider(selectors.effectLevelSlider);
-
-  // Обработчики событий
-  selectors.effectLevelSlider.noUiSlider.on('update', onSliderUpdate(selectors));
   selectors.effectRadioButtons.forEach((radio) => {
     radio.addEventListener('change', onEffectChange(selectors));
   });
 
-  // Сброс значений при закрытии формы
-  selectors.effectLevel.classList.add('hidden');
+  selectors.effectLevel.classList.add('hidden'); // Скрываем слайдер по умолчанию
 };
 
-// Запуск инициализации
 document.addEventListener('DOMContentLoaded', initializeApp);
 
-
-export {
-  initializeApp
-};
+export { initializeApp };
