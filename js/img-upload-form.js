@@ -2,6 +2,7 @@ import { initializeValidators } from './validate.js';
 import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
 import { scaleSelectors, updateScale, handleSmallerButtonClick, handleBiggerButtonClick, START_SCALE } from './scale.js';
+import { initializeApp } from './slider.js'; // Импортируем функцию инициализации слайдера и фильтров
 
 const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const keydownHandler = (event) => handleEscapeKey(event, () => closeForm(imageEditingSelectors));
@@ -47,6 +48,8 @@ function initializeForm(selectors) {
   document.addEventListener('keydown', keydownHandler);
   // для кнопки закрытия формы
   selectors.cancel.addEventListener('click', closeButtonHandler);
+  // Слайдер и фильтры
+  initializeApp();
   // для хэштегов и комментариев
   selectors.hashtags.addEventListener('keydown', stopEscPropagation);
   selectors.comments.addEventListener('keydown', stopEscPropagation);
@@ -71,6 +74,8 @@ function closeForm(selectors) {
   document.removeEventListener('keydown', keydownHandler);
   // для кнопки закрытия формы
   selectors.cancel.removeEventListener('click', closeButtonHandler);
+  // слайдер
+  selectors.effectLevel.classList.add('hidden');
   // для хэштегов и комментариев
   selectors.hashtags.removeEventListener('keydown', stopEscPropagation);
   selectors.comments.removeEventListener('keydown', stopEscPropagation);
@@ -94,15 +99,25 @@ function closeForm(selectors) {
 }
 
 // Обработчики событий
-imageEditingSelectors.form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  if (pristine.validate()) {
-    imageEditingSelectors.form.submit();
+imageEditingSelectors.input.addEventListener('change', () => {
+  if (imageEditingSelectors.input.files.length > 0) {
+    initializeForm(imageEditingSelectors);
   }
 });
 
-imageEditingSelectors.input.addEventListener('change', () => {
-  if (imageEditingSelectors.input.files.length > 0) {
-    initializeForm(imageEditingSelectors); // Открытие формы и подключение обработчиков масштабирования
+// Передача значения слайдера в форму
+const updateEffectLevelInForm = () => {
+  const effectLevelInput = document.querySelector('input[name="effect-level"]');
+  const effectSlider = document.querySelector('.effect-level__slider');
+  const effectLevelValue = effectSlider.noUiSlider.get(); // значение слайдера
+  effectLevelInput.value = effectLevelValue; // присвоение значения
+};
+
+// Обработчик отправки формы
+imageEditingSelectors.form.addEventListener('submit', (event) => {
+  event.preventDefault(); // предотвратить стандартное поведение
+  updateEffectLevelInForm(); // обновить значение слайдера перед отправкой
+  if (pristine.validate()) { // если форма валидна
+    imageEditingSelectors.form.submit(); // отправить форму
   }
 });
