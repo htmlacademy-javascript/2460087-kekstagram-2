@@ -22,21 +22,19 @@ const IMAGE_EDITING_SELECTORS = {
   form: '.img-upload__form',
   hashtagsInput: '.text__hashtags',
   captionInput: '.text__description',
-};
 
-const SCALE_SELECTORS = {
+  // для слайдера
+  effectLevel: '.img-upload__effect-level',
+  effectLevelValue: '.effect-level__value',
+  effectLevelSlider: '.effect-level__slider',
+  effectsList: '.effects__list',
+  effectRadioButtons: '.effects__radio',
+
+  // для масштабирования
   smallerButton: '.scale__control--smaller',
   biggerButton: '.scale__control--bigger',
   valueInput: '.scale__control--value',
   previewImage: '.img-upload__preview img',
 };
 
-const SLIDER_SELECTORS = {
-  effectLevel: '.img-upload__effect-level', // Контейнер слайдера
-  effectLevelValue: '.effect-level__value', // Поле для записи значения
-  effectLevelSlider: '.effect-level__slider', // Сам слайдер
-  effectsList: '.effects__list', // Список эффектов
-  effectRadioButtons: '.effects__radio', // Радиокнопки для переключения эффектов
-};
-
-export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS, SCALE_SELECTORS, SLIDER_SELECTORS };
+export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS};

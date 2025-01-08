@@ -1,4 +1,4 @@
-import { SCALE_SELECTORS } from './selector-config.js';
+import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
 import { initializeSelectors } from './util.js';
 
 const MIN_SCALE = 25; // Минимальное значение масштаба
@@ -6,7 +6,7 @@ const MAX_SCALE = 100; // Максимальное значение масшта
 const START_SCALE = 100; // Стартовое значение масштаба
 const SCALE_STEP = 25; // Шаг изменения масштаба
 
-const scaleSelectors = initializeSelectors(SCALE_SELECTORS);
+const scaleSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 
 // Функция для обновления масштаба
 const updateScale = (scaleValue) => {

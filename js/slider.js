@@ -1,5 +1,5 @@
 import { initializeSelectors } from './util';
-import { SLIDER_SELECTORS } from './selector-config';
+import { IMAGE_EDITING_SELECTORS } from './selector-config';
 
 // Вспомогательные функции
 const initializeSlider = (slider) => {
@@ -52,9 +52,9 @@ const onEffectChange = (selectors) => () => {
 
 // Инициализация функции
 const initializeApp = () => {
-  const selectors = initializeSelectors(SLIDER_SELECTORS);
+  const selectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
   selectors.previewImage = document.querySelector('.img-upload__preview img');
-  selectors.effectRadioButtons = document.querySelectorAll(SLIDER_SELECTORS.effectRadioButtons);
+  selectors.effectRadioButtons = document.querySelectorAll(IMAGE_EDITING_SELECTORS.effectRadioButtons);
 
   // Инициализация слайдера
   initializeSlider(selectors.effectLevelSlider);
