@@ -2,8 +2,9 @@ import { initializeValidators } from './validate.js';
 import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
 import { scaleSelectors, updateScale, handleSmallerButtonClick, handleBiggerButtonClick, START_SCALE } from './scale.js';
-import { initializeApp } from './slider.js'; // Импортируем функцию инициализации слайдера и фильтров
+import { initializeApp } from './slider.js';
 
+// Инициализация элементов
 const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const keydownHandler = (event) => handleEscapeKey(event, () => closeForm(imageEditingSelectors));
 const closeButtonHandler = () => closeForm(imageEditingSelectors);
@@ -104,6 +105,31 @@ imageEditingSelectors.input.addEventListener('change', () => {
     initializeForm(imageEditingSelectors);
   }
 });
+
+// Функция для установки предварительного просмотра изображения
+function setupImagePreview() {
+  function handleFileChange(event) {
+    const file = event.target.files[0]; // получить файл
+
+    if (!file) {
+      return; // Если файла нет, выход
+    }
+
+    const fileReader = new FileReader();
+
+    fileReader.onload = function () {
+      imageEditingSelectors.preview.src = fileReader.result;
+    };
+
+    fileReader.readAsDataURL(file);
+  }
+
+  imageEditingSelectors.input.addEventListener('change', handleFileChange);
+}
+
+
+// Предварительный просмотр изображения
+setupImagePreview();
 
 // Передача значения слайдера в форму
 const updateEffectLevelInForm = () => {

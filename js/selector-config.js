@@ -13,7 +13,7 @@ const BIG_PICTURE_SELECTORS = {
 const IMAGE_EDITING_SELECTORS = {
   element: '.img-upload__overlay',
   input: '.img-upload__input',
-  preview: '.img-upload__preview',
+  preview: '.img-upload__preview img',
   controls: '.img-upload__controls',
   hashtags: '.text__hashtags',
   comments: '.text__description',
