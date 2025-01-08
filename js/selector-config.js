@@ -20,8 +20,6 @@ const IMAGE_EDITING_SELECTORS = {
   cancel: '.img-upload__cancel',
   submit: '.img-upload__submit',
   form: '.img-upload__form',
-  hashtagsInput: '.text__hashtags',
-  captionInput: '.text__description',
 
   // для слайдера
   effectLevel: '.img-upload__effect-level',
@@ -34,7 +32,6 @@ const IMAGE_EDITING_SELECTORS = {
   smallerButton: '.scale__control--smaller',
   biggerButton: '.scale__control--bigger',
   valueInput: '.scale__control--value',
-  previewImage: '.img-upload__preview img',
 };
 
-export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS};
+export { BIG_PICTURE_SELECTORS, IMAGE_EDITING_SELECTORS };

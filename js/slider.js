@@ -12,12 +12,9 @@ const EFFECTS = {
 
 const setSliderEffect = (effectName) => EFFECTS[effectName] || EFFECTS.default;
 
-const setSliderStatus = (selectors, effect) => {
-  selectors.effectLevel.classList.toggle('hidden', effect.filter === null);
-};
-
+// Обновление отображения ползунка
 const updateSlider = (selectors, effect) => {
-  selectors.effectLevelSlider.noUiSlider.off(); // Удаляем предыдущие обработчики
+  selectors.effectLevelSlider.noUiSlider.off();
   selectors.effectLevelSlider.noUiSlider.on('update', () => {
     const value = +selectors.effectLevelSlider.noUiSlider.get();
     selectors.effectLevelValue.value = value;
@@ -27,42 +24,45 @@ const updateSlider = (selectors, effect) => {
   });
 };
 
-const createSlider = (selectors, effectName) => {
-  const effect = setSliderEffect(effectName);
-  setSliderStatus(selectors, effect);
-
+// Создание слайдера
+const createSlider = (selectors, effect) => {
   noUiSlider.create(selectors.effectLevelSlider, {
     range: effect.range,
     start: effect.start,
     step: effect.step,
     connect: 'lower',
   });
-
   updateSlider(selectors, effect);
 };
 
-const updateSliderOptions = (selectors, effectName) => {
-  const effect = setSliderEffect(effectName);
-  setSliderStatus(selectors, effect);
-
+// Обновление параметров
+const updateSliderOptions = (selectors, effect) => {
   selectors.effectLevelSlider.noUiSlider.updateOptions({
     range: effect.range,
     start: effect.start,
     step: effect.step,
   });
-
   updateSlider(selectors, effect);
 };
 
+// Показать или скрыть
+const setSliderStatus = (selectors, effect) => {
+  selectors.effectLevel.classList.toggle('hidden', effect.filter === null);
+};
+
+// Обработчик изменения эффекта
 const onEffectChange = (selectors) => (event) => {
   const effectName = event.target.value;
+  const effect = setSliderEffect(effectName);
+  setSliderStatus(selectors, effect);
   if (!selectors.effectLevelSlider.noUiSlider) {
-    createSlider(selectors, effectName);
+    createSlider(selectors, effect);
   } else {
-    updateSliderOptions(selectors, effectName);
+    updateSliderOptions(selectors, effect);
   }
 };
 
+// Инициализация слайдера
 const initializeApp = () => {
   const selectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
   selectors.previewImage = document.querySelector('.img-upload__preview img');
@@ -72,7 +72,7 @@ const initializeApp = () => {
     radio.addEventListener('change', onEffectChange(selectors));
   });
 
-  selectors.effectLevel.classList.add('hidden'); // Скрываем слайдер по умолчанию
+  selectors.effectLevel.classList.add('hidden');
 };
 
 document.addEventListener('DOMContentLoaded', initializeApp);

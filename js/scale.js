@@ -12,7 +12,7 @@ const scaleSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 const updateScale = (scaleValue) => {
   const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scaleValue));
   scaleSelectors.valueInput.value = `${scale}%`;
-  scaleSelectors.previewImage.style.transform = `scale(${scale / 100})`;
+  scaleSelectors.preview.style.transform = `scale(${scale / 100})`;
 };
 
 // Обработчик для уменьшения масштаба
