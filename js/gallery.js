@@ -3,7 +3,7 @@ import { generatedPhotos } from './content-generator.js';
 import { picturesContainer } from './render-thumbnails.js';
 
 // Инициализация галереи
-function initGallery(container, photos) {
+const initGallery = (container, photos) => {
   container.addEventListener('click', (event) => {
     const pictureElement = event.target.closest('.picture');
     if (pictureElement) {
@@ -12,22 +12,20 @@ function initGallery(container, photos) {
       openBigPicture(picture);
     }
   });
-}
+};
 
 // Инициализация контейнера фотографий
-function initPicturesContainer(photos) {
-  initGallery(picturesContainer, photos);
-}
+const initPicturesContainer = (photos) => initGallery(picturesContainer, photos);
 
 // Обработчик для кнопки "Загрузить еще"
-function initLoadMoreCommentsHandler() {
+const initLoadMoreCommentsHandler = () => {
   bigPictureSelectors.loader?.addEventListener('click', loadMoreComments);
-}
+};
 
 // Инициализация всех обработчиков
-function init() {
+const init = () => {
   initPicturesContainer(generatedPhotos);
   initLoadMoreCommentsHandler();
-}
+};
 
 init();

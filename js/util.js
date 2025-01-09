@@ -5,7 +5,7 @@ let scrollPosition = 0; // Текущая позиция прокрутки ст
 
 // Функция для блокировки и разблокировки прокрутки страницы
 // Если потребуется удалить, не забыть навесить класс 'modal-open' везде, где используется эта штука
-function toggleBodyScroll(isLocked) {
+const toggleBodyScroll = (isLocked) => {
   if (isLocked) {
     scrollPosition = window.scrollY;
     const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -24,23 +24,22 @@ function toggleBodyScroll(isLocked) {
     window.scrollTo(0, scrollPosition);
     document.body.classList.remove('modal-open');
   }
-}
+};
 
 // Обработчик для клавиши Escape
-function handleEscapeKey(event, callback) {
+const handleEscapeKey = (event, callback) => {
   if (event.key === 'Escape') {
     callback();
   }
-}
+};
 
 // Обработчик для клика вне области изображения
-function handleOutsideClick(event, selectors, callback) {
+const handleOutsideClick = (event, selectors, callback) => {
   const isClickInside = selectors.some((selector) => event.target.closest(selector));
-
   if (!isClickInside) {
     callback();
   }
-}
+};
 
 // Функция для инициализации селекторов
 const initializeSelectors = (selectorsConfig) => {
@@ -53,11 +52,10 @@ const initializeSelectors = (selectorsConfig) => {
   return selectors;
 };
 
-
 export {
   getRandomInteger,
   toggleBodyScroll,
   handleEscapeKey,
   handleOutsideClick,
-  initializeSelectors
+  initializeSelectors,
 };

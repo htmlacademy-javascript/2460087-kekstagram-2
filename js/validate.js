@@ -8,37 +8,32 @@ const INVALID_HASHTAG_COUNT = 'Вы можете использовать не �
 const INVALID_CAPTION = 'Комментарий не должен превышать 140 символов.';
 
 // Приводит хэш-теги к единому формату
-function formatsHashtags(value) {
-  return value.trim().toLowerCase().split(' ').filter((hashtag) => hashtag);
-}
+const formatsHashtags = (value) =>
+  value.trim().toLowerCase().split(' ').filter((hashtag) => hashtag);
 
 // Проверяет уникальность хэш-тегов
-function isUniqueHashtags(value) {
+const isUniqueHashtags = (value) => {
   const hashtags = formatsHashtags(value);
   return hashtags.length === new Set(hashtags).size;
-}
+};
 
 // Проверяет правильность хэш-тегов
-function isRightHashtags(value) {
-  return formatsHashtags(value).every((hashtag) => HASHTAGS_REGEXP.test(hashtag));
-}
+const isRightHashtags = (value) =>
+  formatsHashtags(value).every((hashtag) => HASHTAGS_REGEXP.test(hashtag));
 
 // Проверяет количество хэш-тегов
-function isMaxCountHashtags(value) {
-  return formatsHashtags(value).length <= HASHTAGS_MAX_COUNT;
-}
+const isMaxCountHashtags = (value) =>
+  formatsHashtags(value).length <= HASHTAGS_MAX_COUNT;
 
 // Проверяет длину комментария
-function isValidCaption(value) {
-  return value.length < CAPTION_MAX_LENGTH;
-}
+const isValidCaption = (value) => value.length < CAPTION_MAX_LENGTH;
 
 // Инициализация валидаторов
-function initializeValidators(form, hashtagsInput, captionInput) {
+const initializeValidators = (form, hashtagsInput, captionInput) => {
   const pristine = new Pristine(form, {
     classTo: 'img-upload__field-wrapper',
     errorTextParent: 'img-upload__field-wrapper',
-    errorTextClass: 'img-upload__field-wrapper--error'
+    errorTextClass: 'img-upload__field-wrapper--error',
   });
 
   pristine.addValidator(
@@ -67,6 +62,6 @@ function initializeValidators(form, hashtagsInput, captionInput) {
   );
 
   return pristine;
-}
+};
 
 export { initializeValidators };
