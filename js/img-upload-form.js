@@ -1,10 +1,10 @@
 import { initializeSelectors, toggleBodyScroll, handleEscapeKey } from './util.js';
 import { IMAGE_EDITING_SELECTORS } from './selector-config.js';
+import { initializeValidators } from './validate.js';
 import { scaleSelectors, updateScale, handleSmallerButtonClick, handleBiggerButtonClick, START_SCALE } from './scale.js';
 import { initializeApp } from './slider.js';
-import { initializeValidators } from './validate.js';
 
-// Функции для обработки хэштегов
+// Функция для обработки хэштегов
 const processHashtags = (input) => {
   const hashtags = input.split(' ');
 
@@ -24,16 +24,15 @@ const handleHashtagsInput = (event) => {
   event.target.value = processedValue;
 };
 
-// Функции для обработки событий
+// Функция для предотвращения закрытия формы при нажатии ESC
 const stopEscPropagation = (event) => {
   if (event.key === 'Escape') {
     event.stopPropagation();
   }
 };
 
-// Закрыть форму
+// Функция закрытия формы
 const closeForm = (selectors) => {
-  // удаление обработчиков
   document.removeEventListener('keydown', (event) => handleEscapeKey(event, () => closeForm(selectors)));
   selectors.cancel.removeEventListener('click', () => closeForm(selectors));
   selectors.effectLevel.classList.add('hidden');
@@ -48,7 +47,7 @@ const closeForm = (selectors) => {
   scaleSelectors.biggerButton.removeEventListener('click', handleBiggerButtonClick);
 };
 
-// Передача значения слайдера в форму
+// Функция для обновления уровня эффекта
 const updateEffectLevelInForm = () => {
   const effectLevelInput = document.querySelector('input[name="effect-level"]');
   const effectSlider = document.querySelector('.effect-level__slider');
@@ -58,7 +57,7 @@ const updateEffectLevelInForm = () => {
   }
 };
 
-// Создание предварительного просмотра изображения
+// Функция предварительного просмотра изображения
 const setupImagePreview = (selectors) => {
   selectors.input.addEventListener('change', (event) => {
     const file = event.target.files[0];
@@ -72,32 +71,22 @@ const setupImagePreview = (selectors) => {
   });
 };
 
-// Инициализация формы
+// Функция инициализации формы
 const initializeForm = (selectors) => {
-  // обработка клавиши ESC
   document.addEventListener('keydown', (event) => handleEscapeKey(event, () => closeForm(selectors)));
-  // кнопка закрытия формы
   selectors.cancel.addEventListener('click', () => closeForm(selectors));
-  // слайдер и фильтры
   initializeApp();
-  // хэштеги и комментарии
   selectors.hashtags.addEventListener('keydown', stopEscPropagation);
   selectors.comments.addEventListener('keydown', stopEscPropagation);
   selectors.hashtags.addEventListener('input', handleHashtagsInput);
-  // отключить прокрутку
   toggleBodyScroll(true);
-  // показать форму
   selectors.element.classList.remove('hidden');
-
-  // начальный масштаб
   updateScale(START_SCALE);
-
-  // обработчики изменения масштаба
   scaleSelectors.smallerButton.addEventListener('click', handleSmallerButtonClick);
   scaleSelectors.biggerButton.addEventListener('click', handleBiggerButtonClick);
 };
 
-// Обработчик отправки формы
+// Функция обработки отправки формы
 const handleFormSubmit = (event, selectors, pristine) => {
   event.preventDefault();
   updateEffectLevelInForm();
@@ -106,24 +95,27 @@ const handleFormSubmit = (event, selectors, pristine) => {
   }
 };
 
-// Инициализация формы для загрузки изображения
+// Инициализация формы загрузки изображения
 const initializeImageUploadForm = () => {
   const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
+
   const pristine = initializeValidators(
     imageEditingSelectors.form,
-    imageEditingSelectors.hashtagsInput,
-    imageEditingSelectors.captionInput
+    imageEditingSelectors.hashtags,
+    imageEditingSelectors.comments
   );
 
   imageEditingSelectors.input.addEventListener('change', () => {
     if (imageEditingSelectors.input.files.length > 0) {
-      initializeForm(imageEditingSelectors);
+      initializeForm({ ...imageEditingSelectors });
     }
   });
 
-  imageEditingSelectors.form.addEventListener('submit', (event) => handleFormSubmit(event, imageEditingSelectors, pristine));
+  imageEditingSelectors.form.addEventListener('submit', (event) =>
+    handleFormSubmit(event, { ...imageEditingSelectors, ...imageEditingSelectors }, pristine)
+  );
 
   setupImagePreview(imageEditingSelectors);
 };
 
-initializeImageUploadForm();
+export { initializeImageUploadForm };

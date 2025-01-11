@@ -1,4 +1,5 @@
 import { initGalleryModule } from './init-gallery.js';
-import './img-upload-form.js';
+import { initializeImageUploadForm } from './img-upload-form.js';
 
 initGalleryModule();
+initializeImageUploadForm ();

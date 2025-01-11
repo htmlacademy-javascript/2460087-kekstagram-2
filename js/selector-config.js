@@ -15,10 +15,11 @@ const IMAGE_EDITING_SELECTORS = {
   input: '.img-upload__input',
   preview: '.img-upload__preview img',
   controls: '.img-upload__controls',
-  hashtags: '.text__hashtags',
-  comments: '.text__description',
   cancel: '.img-upload__cancel',
   submit: '.img-upload__submit',
+
+  hashtags: '.text__hashtags',
+  comments: '.text__description',
   form: '.img-upload__form',
 
   // для слайдера
