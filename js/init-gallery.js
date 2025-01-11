@@ -1,7 +1,7 @@
-import { openBigPicture, loadMoreComments, bigPictureSelectors } from './modal.js';
-import { renderThumbnails, picturesContainer } from './render-thumbnails.js';
 import { getData } from './server.js';
 import { showErrorMessage } from './messages.js';
+import { picturesContainer, renderThumbnails } from './render-thumbnails.js';
+import { openBigPicture, loadMoreComments, bigPictureSelectors } from './modal.js';
 
 // Инициализация галереи
 const initGallery = (container, photos) => {
@@ -26,8 +26,8 @@ const initLoadMoreCommentsHandler = () => {
   bigPictureSelectors.loader?.addEventListener('click', loadMoreComments);
 };
 
-// Инициализация всех обработчиков
-const init = () => {
+// Инициализация модуля галереи
+const initGalleryModule = () => {
   getData(
     (photos) => {
       initPicturesContainer(photos);
@@ -37,4 +37,4 @@ const init = () => {
   );
 };
 
-init();
+export { initGalleryModule };

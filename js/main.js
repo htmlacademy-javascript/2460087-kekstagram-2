@@ -1,3 +1,4 @@
-import './render-thumbnails.js';
-import './gallery.js';
+import { initGalleryModule } from './init-gallery.js';
 import './img-upload-form.js';
+
+initGalleryModule();
