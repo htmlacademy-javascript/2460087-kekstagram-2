@@ -1,4 +1,5 @@
-import { generatedPhotos } from './content-generator.js';
+import { getData } from './server.js';
+import { showErrorMessage } from './messages.js';
 
 // Селекторы
 const picturesContainer = document.querySelector('.pictures');
@@ -35,7 +36,10 @@ const renderThumbnails = (photos) => {
   appendThumbnails(thumbnails, picturesContainer);
 };
 
-// Вызов рендера
-renderThumbnails(generatedPhotos);
+// Загрузка данных и рендеринг
+getData(
+  (photos) => renderThumbnails(photos),
+  () => showErrorMessage()
+);
 
-export { picturesContainer };
+export { picturesContainer, renderThumbnails };
