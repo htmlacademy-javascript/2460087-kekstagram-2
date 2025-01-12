@@ -71,8 +71,8 @@ const setupImagePreview = (selectors) => {
   });
 };
 
-// Функция инициализации формы
-const initializeForm = (selectors) => {
+// Функция инициализации формы редактирования изображения
+const initializeImageEditingForm = (selectors) => {
   document.addEventListener('keydown', (event) => handleEscapeKey(event, () => closeForm(selectors)));
   selectors.cancel.addEventListener('click', () => closeForm(selectors));
   initializeApp();
@@ -96,7 +96,7 @@ const handleFormSubmit = (event, selectors, pristine) => {
 };
 
 // Инициализация формы загрузки изображения
-const initializeImageUploadForm = () => {
+const initializeImageUpload = () => {
   const imageEditingSelectors = initializeSelectors(IMAGE_EDITING_SELECTORS);
 
   const pristine = initializeValidators(
@@ -107,7 +107,7 @@ const initializeImageUploadForm = () => {
 
   imageEditingSelectors.input.addEventListener('change', () => {
     if (imageEditingSelectors.input.files.length > 0) {
-      initializeForm({ ...imageEditingSelectors });
+      initializeImageEditingForm({ ...imageEditingSelectors });
     }
   });
 
@@ -118,4 +118,4 @@ const initializeImageUploadForm = () => {
   setupImagePreview(imageEditingSelectors);
 };
 
-export { initializeImageUploadForm };
+export { initializeImageUpload };
