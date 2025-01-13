@@ -26,5 +26,4 @@ const sendData = (onSuccess, onFail, body) => {
     .catch(() => onFail());
 };
 
-// Экспорт функции
 export { getData, sendData };

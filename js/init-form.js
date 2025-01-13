@@ -34,9 +34,9 @@ const stopEscPropagation = (event) => {
 };
 
 // Функция закрытия формы
-const closeForm = (selectors) => {
-  document.removeEventListener('keydown', (event) => handleEscapeKey(event, () => closeForm(selectors)));
-  selectors.cancel.removeEventListener('click', () => closeForm(selectors));
+const closeForm = (selectors, handleFormClose) => {
+  document.removeEventListener('keydown', handleFormClose);
+  selectors.cancel.removeEventListener('click', () => closeForm(selectors, handleFormClose));
   selectors.effectLevel.classList.add('hidden');
   selectors.hashtags.removeEventListener('keydown', stopEscPropagation);
   selectors.comments.removeEventListener('keydown', stopEscPropagation);
@@ -68,6 +68,7 @@ const closeForm = (selectors) => {
   toggleBodyScroll(false);
 };
 
+
 // Функция для обновления уровня эффекта
 const updateEffectLevelInForm = () => {
   const effectLevelInput = document.querySelector('input[name="effect-level"]');
@@ -94,8 +95,14 @@ const setupImagePreview = (selectors) => {
 
 // Функция инициализации формы редактирования изображения
 const initializeImageEditingForm = (selectors) => {
-  document.addEventListener('keydown', (event) => handleEscapeKey(event, () => closeForm(selectors)));
-  selectors.cancel.addEventListener('click', () => closeForm(selectors));
+  const handleFormClose = (event) => handleEscapeKey(event, () => closeForm(selectors));
+
+  document.addEventListener('keydown', handleFormClose);
+
+  selectors.cancel.addEventListener('click', () => {
+    closeForm(selectors, handleFormClose);
+  });
+
   initializeApp();
   selectors.hashtags.addEventListener('keydown', stopEscPropagation);
   selectors.comments.addEventListener('keydown', stopEscPropagation);
@@ -114,22 +121,20 @@ const removeMessage = (messageClass) => {
   }
 };
 
-document.body.addEventListener('click', (event) => {
-  if (!event.target.closest('.success') && !event.target.closest('.data-error')) {
+const handleMessageRemove = (event) => {
+  if (
+    event.key === 'Escape' ||
+    event.target.closest('.success__button') ||
+    event.target.closest('.data-error__button') ||
+    (!event.target.closest('.success') && !event.target.closest('.data-error'))
+  ) {
     removeMessage('.success');
     removeMessage('.data-error');
   }
-});
+};
 
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    removeMessage('.success');
-    removeMessage('.data-error');
-  }
-});
-
-document.querySelector('.success__button')?.addEventListener('click', () => removeMessage('.success'));
-document.querySelector('.data-error__button')?.addEventListener('click', () => removeMessage('.data-error'));
+document.addEventListener('keydown', handleMessageRemove);
+document.body.addEventListener('click', handleMessageRemove);
 
 // Обработчик отправки формы
 const handleFormSubmit = (event, selectors, pristine) => {
@@ -137,16 +142,25 @@ const handleFormSubmit = (event, selectors, pristine) => {
 
   updateEffectLevelInForm(); // Обновить уровень эффекта в форме
 
+  const submitButton = selectors.submit;
+  submitButton.disabled = true; // Блок кнопки
+
   if (pristine.validate()) {
     const formData = new FormData(selectors.form); // Собрать данные формы
     sendData(
       () => {
+        submitButton.disabled = false; // Разблокировать кнопку после успешной отправки
         showSuccessMessage(); // Показать успешное сообщение
         closeForm(selectors); // Закрыть форму и сбросить данные
       },
-      () => showErrorMessage(), // Показать сообщение об ошибке
+      () => {
+        submitButton.disabled = false; // Разблокировать кнопку при ошибке
+        showErrorMessage(); // Показать сообщение об ошибке
+      },
       formData // Отправить данные формы
     );
+  } else {
+    submitButton.disabled = false; // Разблокировать кнопку, если форма не прошла валидацию
   }
 };
 
