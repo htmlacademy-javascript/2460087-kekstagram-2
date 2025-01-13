@@ -1,6 +1,7 @@
+import { getData } from './server.js';
+import { showErrorMessage } from './messages.js';
+import { picturesContainer, renderThumbnails } from './render-thumbnails.js';
 import { openBigPicture, loadMoreComments, bigPictureSelectors } from './modal.js';
-import { generatedPhotos } from './content-generator.js';
-import { picturesContainer } from './render-thumbnails.js';
 
 // Инициализация галереи
 const initGallery = (container, photos) => {
@@ -15,17 +16,25 @@ const initGallery = (container, photos) => {
 };
 
 // Инициализация контейнера фотографий
-const initPicturesContainer = (photos) => initGallery(picturesContainer, photos);
+const initPicturesContainer = (photos) => {
+  renderThumbnails(photos);
+  initGallery(picturesContainer, photos);
+};
 
 // Обработчик для кнопки "Загрузить еще"
 const initLoadMoreCommentsHandler = () => {
   bigPictureSelectors.loader?.addEventListener('click', loadMoreComments);
 };
 
-// Инициализация всех обработчиков
-const init = () => {
-  initPicturesContainer(generatedPhotos);
-  initLoadMoreCommentsHandler();
+// Инициализация модуля галереи
+const initGalleryModule = () => {
+  getData(
+    (photos) => {
+      initPicturesContainer(photos);
+      initLoadMoreCommentsHandler();
+    },
+    showErrorMessage
+  );
 };
 
-init();
+export { initGalleryModule };

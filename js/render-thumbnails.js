@@ -1,10 +1,9 @@
-import { generatedPhotos } from './content-generator.js';
+import { updatePhotos } from './filters.js';
+import { getData } from './server.js';
+import { showErrorMessage } from './messages.js';
 
-// Селекторы
 const picturesContainer = document.querySelector('.pictures');
 const template = document.querySelector('#picture').content;
-
-// Функции
 
 // Создаёт DOM-элемент для одной фотографии
 const createThumbnail = ({ url, description, likes, comments }, thumbnailTemplate) => {
@@ -29,13 +28,26 @@ const appendThumbnails = (thumbnails, container) => {
   container.appendChild(fragment);
 };
 
-// Функция рендера
+// Функция для очистки контейнера с фотографиями
+const clearThumbnails = () => {
+  const photos = picturesContainer.querySelectorAll('.picture');
+  photos.forEach((photo) => photo.remove());
+};
+
+// Функция рендеринга
 const renderThumbnails = (photos) => {
+  clearThumbnails();
   const thumbnails = photos.map((photo) => createThumbnail(photo, template));
   appendThumbnails(thumbnails, picturesContainer);
 };
 
-// Вызов рендера
-renderThumbnails(generatedPhotos);
+// Загрузка данных и рендеринг
+getData(
+  (photosData) => {
+    updatePhotos(photosData);
+    renderThumbnails(photosData);
+  },
+  () => showErrorMessage()
+);
 
-export { picturesContainer };
+export { picturesContainer, renderThumbnails };
