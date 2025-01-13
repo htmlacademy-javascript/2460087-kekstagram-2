@@ -3,20 +3,20 @@ import { debounce, getRandomInteger } from './util.js';
 import { getData } from './server.js';
 import { showErrorMessage } from './messages.js';
 
+// Константы
+const RANDOM_PHOTO_COUNT = 10;
+const FILTER_DEFAULT = 'filter-default';
+const FILTER_RANDOM = 'filter-random';
+const FILTER_DISCUSSED = 'filter-discussed';
+
+// Переменные
 let photos = []; // Массив всех фотографий
 
-// Функция для обновления массива фотографий
-const updatePhotos = (newPhotos) => {
-  photos = newPhotos;
-};
-
-// Фильтр по умолчанию
+// Функции фильтров
 const filterDefault = () => photos;
 
-// Фильтр случайных
 const filterRandom = () => {
   const randomPhotos = [...photos];
-  const randomCount = 10;
 
   // Перемешиваем массив случайным образом
   for (let i = randomPhotos.length - 1; i > 0; i--) {
@@ -24,16 +24,17 @@ const filterRandom = () => {
     [randomPhotos[i], randomPhotos[j]] = [randomPhotos[j], randomPhotos[i]];
   }
 
-  return randomPhotos.slice(0, randomCount);
+  return randomPhotos.slice(0, RANDOM_PHOTO_COUNT);
 };
 
-// Фильтр по обсуждаемости
 const filterDiscussed = () => [...photos].sort((a, b) => b.comments.length - a.comments.length);
 
-// элементы фильтров
-const filterButtons = document.querySelectorAll('.img-filters__button');
+// Обновление массива фотографий
+const updatePhotos = (newPhotos) => {
+  photos = newPhotos;
+};
 
-// Устанавливаем активный фильтр
+// Установка активного фильтра
 const setActiveFilter = (evt) => {
   const activeButton = document.querySelector('.img-filters__button--active');
   if (activeButton && !activeButton.isEqualNode(evt.target)) {
@@ -49,13 +50,13 @@ const onFilterChange = (event) => {
 
   // Применить выбранный фильтр
   switch (filter) {
-    case 'filter-default':
+    case FILTER_DEFAULT:
       filteredPhotos = filterDefault();
       break;
-    case 'filter-random':
+    case FILTER_RANDOM:
       filteredPhotos = filterRandom();
       break;
-    case 'filter-discussed':
+    case FILTER_DISCUSSED:
       filteredPhotos = filterDiscussed();
       break;
   }
@@ -64,19 +65,29 @@ const onFilterChange = (event) => {
   renderThumbnails(filteredPhotos);
 };
 
-// обработчики событий для всех кнопок фильтров
+// Обработчик с задержкой для фильтрации
 const debounceRender = debounce((evt) => {
-  setActiveFilter(evt);
-  onFilterChange(evt);
+  onFilterChange(evt); // Обработка фильтрации с задержкой
 }, 300);
 
+// Обработчик события на кнопку фильтра
+const filterButtonClickHandler = (evt) => {
+  setActiveFilter(evt);
+  debounceRender(evt);
+};
+
+// Получаем элементы фильтров
+const filterButtons = document.querySelectorAll('.img-filters__button');
+
+// Добавляем обработчики событий для всех кнопок фильтров
 filterButtons.forEach((button) => {
-  button.addEventListener('click', (evt) => debounceRender(evt)); // обработчик с задержкой
+  button.addEventListener('click', filterButtonClickHandler); // Обработчик с немедленным обновлением стилей
 });
 
-// блок фильтров после загрузки данных
+// Блок фильтров
 const filtersBlock = document.querySelector('.img-filters');
 
+// Показать блок фильтров
 const showFilters = () => {
   filtersBlock.classList.remove('img-filters--inactive');
 };
